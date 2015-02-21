@@ -2,15 +2,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/main_color" >
+    android:background="@color/white" >
 
     <TextView
         android:id="@+id/city_name"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
+        android:background="@color/main_color"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingTop="10dp"
         android:text="@string/hello_world"
         android:textColor="@color/white"
         android:textSize="18sp" />
@@ -28,7 +29,12 @@
         android:layout_height="fill_parent"
         android:layout_above="@+id/bottomBar"
         android:layout_below="@id/sep"
-        android:background="@color/white" />
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:divider="@null"
+        android:dividerHeight="10dp"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp" />
 
     <RelativeLayout
         android:id="@+id/bottomBar"
@@ -58,8 +64,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:background="@drawable/circle_white_sel"
-            android:padding="15dp"
+            android:padding="10dp"
             android:src="@drawable/send" >
         </ImageView>
     </RelativeLayout>

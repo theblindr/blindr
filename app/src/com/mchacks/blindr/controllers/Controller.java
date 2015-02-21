@@ -1,6 +1,5 @@
 package com.mchacks.blindr.controllers;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.mchacks.blindr.models.User;
@@ -8,6 +7,7 @@ import com.mchacks.blindr.models.User;
 public class Controller {
 	private String city;
 	private HashMap<String, User> users;
+	private User myselfUser;
 	
 	private static Controller controller;
 	
@@ -38,5 +38,13 @@ public class Controller {
 	
 	public User getUser(String tokenId){
 		return users.get(tokenId);
+	}
+	
+	public void setMyOwnUser(User user){
+		this.myselfUser = user;
+	}
+	
+	public User getMyself(){
+		return myselfUser;
 	}
 }
