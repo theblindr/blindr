@@ -2,5 +2,7 @@
 <resources>
 
     <string name="app_name">blindr</string>
+    <string name="title_activity_public_chat">Public Chat</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>
