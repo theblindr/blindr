@@ -1,5 +1,6 @@
 package com.mchacks.blindr.controllers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.mchacks.blindr.models.User;
@@ -8,12 +9,14 @@ public class Controller {
 	private String city;
 	private HashMap<String, User> users;
 	private User myselfUser;
+	private ArrayList<String> privateChats;
 	
 	private static Controller controller;
 	
 	private Controller(){
 		city = "";
 		users = new HashMap<String, User>();
+		privateChats = new ArrayList<String>();
 	}
 	
 	public static Controller getInstance(){
@@ -46,5 +49,13 @@ public class Controller {
 	
 	public User getMyself(){
 		return myselfUser;
+	}
+	
+	public void setMutualChats(ArrayList<String> mutualChats){
+		this.privateChats = mutualChats;
+	}
+	
+	public ArrayList<String> getMutualChats(){
+		return privateChats;
 	}
 }
