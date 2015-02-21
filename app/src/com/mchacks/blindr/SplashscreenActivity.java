@@ -38,7 +38,7 @@ ConnectionCallbacks, OnConnectionFailedListener {
 		//Remove title bar
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.splashscreen);
 
 		TextView tv = (TextView) findViewById(R.id.splash_text);
 
