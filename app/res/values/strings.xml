@@ -4,5 +4,7 @@
     <string name="app_name">blindr</string>
     <string name="title_activity_public_chat">Public Chat</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_connect_facebook">Connect Facebook</string>
+    <string name="app_id">750374798414544</string>
 
 </resources>
