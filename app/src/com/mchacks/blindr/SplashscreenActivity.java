@@ -98,7 +98,7 @@ ConnectionCallbacks, OnConnectionFailedListener {
 				android.util.Log.i("Blindr", "City name=" + city);
 				Controller.getInstance().setCity(city);
 				Controller.getInstance().setMyOwnUser(new User("Marc-Antoine", AvatarGenerator.generate(this, 50, 50), "vagin"));
-				Intent i = new Intent(SplashscreenActivity.this, PublicChatActivity.class);
+				Intent i = new Intent(SplashscreenActivity.this, ConnectFacebookActivity.class);
 				startActivity(i);
 				finish();
 			} catch (IOException e) {

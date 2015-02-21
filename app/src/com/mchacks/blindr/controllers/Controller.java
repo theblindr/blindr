@@ -3,16 +3,18 @@ package com.mchacks.blindr.controllers;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.facebook.Session;
 import com.mchacks.blindr.models.User;
 
 public class Controller {
 	private String city;
 	private HashMap<String, User> users;
+	private Session session;
 	private User myselfUser;
 	private ArrayList<String> privateChats;
 	
 	private static Controller controller;
-	
+
 	private Controller(){
 		city = "";
 		users = new HashMap<String, User>();
@@ -41,6 +43,14 @@ public class Controller {
 	
 	public User getUser(String tokenId){
 		return users.get(tokenId);
+	}
+	
+	public Session getSession() {
+		return session;
+	}
+
+	public void setSession(Session session) {
+		this.session = session;
 	}
 	
 	public void setMyOwnUser(User user){
