@@ -8,16 +8,21 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
-import com.checkin.avatargenerator.AvatarGenerator;
 import com.mchacks.blindr.controllers.Controller;
-import com.mchacks.blindr.models.User;
+import com.mchacks.blindr.models.ChatAdapter;
+import com.mchacks.blindr.models.Message;
 
 public class PublicChatActivity extends Activity implements OnClickListener {
 	private Typeface tf;
 	private ImageView sendBt;
+	private ChatAdapter chatAdapter;
+	private ListView listView;
+	private EditText editText;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -34,19 +39,30 @@ public class PublicChatActivity extends Activity implements OnClickListener {
 		city.setTypeface(tf);
 		city.setText(Controller.getInstance().getCity());
 		
-		
-		User user = new User("Stroboscope", AvatarGenerator.generate(this, 50, 50), "vagin");
-		Controller.getInstance().addUser(user);
-		
+		editText = (EditText) findViewById(R.id.editText);
 		
 		sendBt = (ImageView) findViewById(R.id.send);
 		sendBt.setOnClickListener(this);
+		
+		chatAdapter = new ChatAdapter(this, new ArrayList<Message>());
+		listView = (ListView) findViewById(R.id.list);
+		
+		listView.setAdapter(chatAdapter);
+		
 	}
 
 	@Override
 	public void onClick(View v) {
 		if(v.getId() == R.id.send){
-			
+			final String text = editText.getText().toString();
+			if(!text.isEmpty()){
+				Message message = new Message(Controller.getInstance().getMyself(), text);
+				chatAdapter.addMessage(message);
+				chatAdapter.notifyDataSetChanged();
+				editText.setText("");
+			}
 		}
 	}
+	
+	
 }
