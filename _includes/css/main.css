@@ -36,10 +36,9 @@ h6 {
     font-weight: 700;
 }
 
-#logo-blindr{
-    text-transform: uppercase;
-    font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-weight: 700;    
+@font-face {
+font-family: GraublauWeb;
+src: url("/css/raleway/fonts/Raleway_Thin.otf") format("opentype");
 }
 
 hr.star-light,
