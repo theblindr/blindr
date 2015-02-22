@@ -68,14 +68,15 @@ public class Server {
 			protected String doInBackground(String... arg0) {
 				String finalAddress = address + "events";
 				Log.i("SERVER_INOFS", "Events address: " + finalAddress);
+				Log.i("SERVER+INFOS", "Events city: " + arg0[1]);
 				
 				List<NameValuePair> data = new ArrayList<NameValuePair>();
 				data.add(new BasicNameValuePair("city", arg0[1]));
 				
 				List<NameValuePair> headers = new ArrayList<NameValuePair>();
-				headers.add(new BasicNameValuePair("X-User-Token’", arg0[0]));
+				headers.add(new BasicNameValuePair("X-User-Token", arg0[0]));
 				
-				HTTPRequest request = new HTTPRequest(finalAddress, RequestType.GET, null, headers);
+				HTTPRequest request = new HTTPRequest(finalAddress, RequestType.GET, data, headers);
 				return request.getOutput();
 			}
 
@@ -97,7 +98,7 @@ public class Server {
 			
 		};
 		
-		request.execute(Controller.getInstance().getMyself().getId(), Controller.getInstance().getCity());
+		request.execute(Controller.getInstance().getMyself().getId(), Controller.getInstance().getCity().getName());
 	}
 	
 	public static void sendPrivateMessage(User destination, String message) {
@@ -215,7 +216,7 @@ public class Server {
 	}
 	
 	public static void getMatches() {
-		// get les vieux matchs d'avant
+		// get les vieux matchs déjà fait
 	}
 	
 	public static void getUserEvents(User user) {
@@ -269,14 +270,14 @@ public class Server {
 		reader.beginObject();
 		while(reader.hasNext()) {
 			String name = reader.nextName();
-			if (name.equals("id")) {
+			if (name.equals("event_id")) {
 				id = UUID.fromString(reader.nextString());
 			} else if (name.equals("type")) {
 				type = reader.nextString();
-			} else if (name.equals("dest")) {
+			} else if (name.equals("dst")) {
 				destination = reader.nextString();
 			} else if (name.equals("sent_at")) {
-				timestamp = new Timestamp(reader.nextLong());
+				timestamp = new Timestamp((long)(reader.nextDouble()*1000));
 			} else if (name.equals("src")) {
 				userId = reader.nextString();
 			} else if (name.equals("message")) {

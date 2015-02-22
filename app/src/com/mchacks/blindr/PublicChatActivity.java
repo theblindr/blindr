@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.mchacks.blindr.controllers.Controller;
 import com.mchacks.blindr.models.ChatAdapter;
 import com.mchacks.blindr.models.Message;
+import com.mchacks.blindr.models.Server;
 
 public class PublicChatActivity extends Activity implements OnClickListener {
 	private Typeface tf;
@@ -37,7 +38,7 @@ public class PublicChatActivity extends Activity implements OnClickListener {
 
 		tf = Typeface.createFromAsset(getAssets(), "fonts/Raleway_Thin.otf");
 		city.setTypeface(tf);
-		city.setText(Controller.getInstance().getCity());
+		city.setText(Controller.getInstance().getCity().getId());
 		
 		editText = (EditText) findViewById(R.id.editText);
 		
@@ -59,6 +60,7 @@ public class PublicChatActivity extends Activity implements OnClickListener {
 				Message message = new Message(Controller.getInstance().getMyself(), text);
 				chatAdapter.addMessage(message);
 				chatAdapter.notifyDataSetChanged();
+				Server.sendPublicMessage(Controller.getInstance().getCity(), message.getMessage());
 				editText.setText("");
 			}
 		}

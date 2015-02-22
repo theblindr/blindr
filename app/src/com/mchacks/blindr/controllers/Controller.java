@@ -7,10 +7,11 @@ import android.content.Context;
 import android.util.TypedValue;
 
 import com.facebook.Session;
+import com.mchacks.blindr.models.City;
 import com.mchacks.blindr.models.User;
 
 public class Controller {
-	private String city;
+	private City city;
 	private HashMap<String, User> users;
 	private Session session;
 	private User myselfUser;
@@ -20,7 +21,7 @@ public class Controller {
 	private static Controller controller;
 
 	private Controller(){
-		city = "";
+		city = new City("");
 		users = new HashMap<String, User>();
 		privateChats = new ArrayList<String>();
 	}
@@ -33,11 +34,11 @@ public class Controller {
 		return controller;
 	}
 	
-	public void setCity(String city){
+	public void setCity(City city){
 		this.city = city;
 	}
 	
-	public String getCity(){
+	public City getCity(){
 		return city;
 	}
 	
