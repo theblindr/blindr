@@ -54,9 +54,6 @@ public class Server {
 						listener.onUserAuthenticated();
 					}
 					
-					
-					getUserFacebookInfos(new User("", null, "602452146528719"));
-					
 				} catch (IOException e) {
 					Log.i("SERVER_INFOS", "Error while authenticating.");
 					e.printStackTrace();
@@ -447,11 +444,19 @@ public class Server {
 	private static Match readMatch(JsonReader reader) throws IOException {
 		reader.beginObject();
 		String userId = "";
+		String fakeName = "";
+		String realName = "";
 		Boolean mutual = false;
 		while(reader.hasNext()) {
 			String name = reader.nextName();
 			if(name.equals("other")) {
 				userId = reader.nextString();
+			}
+			else if(name.equals("other_fake_name")) {
+				fakeName = reader.nextString();
+			}
+			else if(name.equals("other_real_name")) {
+				realName = reader.nextString();
 			}
 			else if(name.equals("mutual")) {
 				mutual = reader.nextBoolean();
@@ -463,7 +468,7 @@ public class Server {
 		reader.endObject();
 		User user = Controller.getInstance().getUser(userId);
 		if(user != null) {
-			return new Match(null, null, Controller.getInstance().getMyself(), user, mutual, null);
+			return new Match(null, null, Controller.getInstance().getMyself(), user, mutual, realName, fakeName);
 		}
 		return null;
 	}

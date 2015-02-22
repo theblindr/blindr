@@ -10,11 +10,11 @@ public class Match extends Event{
 	private Boolean isMutual;
 	
 	public Match(UUID id, Timestamp timestamp, IDestination destination, User user) {
-		this(id, timestamp, destination, user, false, null);
+		this(id, timestamp, destination, user, false, null, null);
 	}
 		
-	public Match(UUID id, Timestamp timestamp, IDestination destination, User user, Boolean isMutual, String realName) {
-		super(id, timestamp, destination, user, realName);
+	public Match(UUID id, Timestamp timestamp, IDestination destination, User user, Boolean isMutual, String realName, String fakeName) {
+		super(id, timestamp, destination, user, realName, fakeName);
 		this.isMutual = isMutual;
 	}
 	
