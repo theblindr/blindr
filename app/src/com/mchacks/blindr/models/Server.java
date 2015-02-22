@@ -23,6 +23,7 @@ public class Server {
 	
 	private static List<UserAuthenticatedListener> userAuthenticatedListeners = new ArrayList<UserAuthenticatedListener>();
 	private static List<EventsListener> eventsListeners = new ArrayList<EventsListener>();
+	private static List<FacebookProfileListener> profileListeners = new ArrayList<FacebookProfileListener>();
 	private static String address = "https://blindr-backend.herokuapp.com/";
 	
 	public static void connect(String authenticationToken) {
@@ -51,6 +52,10 @@ public class Server {
 					for(UserAuthenticatedListener listener: userAuthenticatedListeners) {
 						listener.onUserAuthenticated();
 					}
+					
+					
+					getUserFacebookInfos(new User("", null, "602452146528719"));
+					
 				} catch (IOException e) {
 					Log.i("SERVER_INFOS", "Error while authenticating.");
 					e.printStackTrace();
@@ -284,12 +289,63 @@ public class Server {
 		request.execute(Controller.getInstance().getMyself().getId(), user.getId());
 	}
 	
+	public static void getUserFacebookInfos(User user) {
+		// get les events avec un user en particulier
+		AsyncTask<String, Void, String> request = new AsyncTask<String, Void, String>() {
+
+			@Override
+			protected String doInBackground(String... arg0) {
+				String finalAddress = address + "events/pictures";
+				Log.i("SERVER_INOFS", "Pictures avec user address: " + finalAddress);
+				
+				List<NameValuePair> headers = new ArrayList<NameValuePair>();
+				headers.add(new BasicNameValuePair("X-User-Token", arg0[0]));
+				
+				List<NameValuePair> data = new ArrayList<NameValuePair>();
+				data.add(new BasicNameValuePair("dst_id", arg0[1]));
+				
+				HTTPRequest request = new HTTPRequest(finalAddress, RequestType.GET, data, headers);
+				return request.getOutput();
+			}
+
+			@Override
+			protected void onPostExecute(String result) {
+				super.onPostExecute(result);
+				try {
+					Log.i("SERVER_INFOS", "User pictures response: "+ result);
+					//String[] pictures = result.replace("[", "").replace("]", "").replace("\"", "").replace(" ", "").split(",");
+					List<String> pictures = new ArrayList<String>();
+ 					StringReader in = new StringReader(result);
+					JsonReader reader = new JsonReader(in);
+					reader.beginArray();
+					while(reader.hasNext()){
+						pictures.add(reader.nextString());
+					}
+					reader.endArray();
+					reader.close();
+					in.close();
+					for(FacebookProfileListener listener: profileListeners) {
+						listener.onProfilePicturesReceived(pictures);
+					}
+				} catch (IOException e) {
+					Log.i("SERVER_INFOS", "Something went wrong when fetching the pictures.");
+					e.printStackTrace();
+				}
+			}
+		};
+		request.execute(Controller.getInstance().getMyself().getId(), user.getId());
+	}
+	
 	public static void addUserAuthenticatedListener(UserAuthenticatedListener listener) {
 		userAuthenticatedListeners.add(listener);
 	}
 	
 	public static void addEventsListener(EventsListener listener) {
 		eventsListeners.add(listener);
+	}
+	
+	public static void addProfileListener(FacebookProfileListener listener) {
+		profileListeners.add(listener);
 	}
 	
 	private static String readUserToken(Reader in) throws IOException {
