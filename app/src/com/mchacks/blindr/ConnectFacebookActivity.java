@@ -8,6 +8,8 @@ import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.widget.LoginButton;
 import com.mchacks.blindr.controllers.Controller;
+import com.mchacks.blindr.models.Server;
+import com.mchacks.blindr.models.UserAuthenticatedListener;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -15,7 +17,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
 
-public class ConnectFacebookActivity extends Activity {
+public class ConnectFacebookActivity extends Activity implements UserAuthenticatedListener{
 
 	private UiLifecycleHelper uiHelper;
 
@@ -30,9 +32,8 @@ public class ConnectFacebookActivity extends Activity {
 		if(state.isOpened()) {
 			List<String> permissions = session.getPermissions();
 			Log.i("FACEBOOK_CONNECTION", "Logged in..." + permissions.toString());
-			Intent i = new Intent(ConnectFacebookActivity.this, PublicChatActivity.class);
-			startActivity(i);
-			finish();
+			
+			Server.connect(session.getAccessToken());
 		} else if(state.isClosed()) {
 			Log.i("FACEBOOK_CONNECTION", "Logged out...");
 		}
@@ -41,6 +42,8 @@ public class ConnectFacebookActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		Server.addUserAuthenticatedListener(this);
 
 		//Remove title bar
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -75,11 +78,13 @@ public class ConnectFacebookActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		Session session = Session.getActiveSession();
-		if(session != null && 
-				(session.isOpened() || session.isClosed())) {
-			onSessionStateChange(session, session.getState(), null);
-		}
+//		if(Controller.getInstance().getSession() == null) {
+//			Session session = Session.getActiveSession();
+//			if(session != null && 
+//					(session.isOpened() || session.isClosed())) {
+//				onSessionStateChange(session, session.getState(), null);
+//			}
+//		}
 		uiHelper.onResume();
 	}
 
@@ -87,6 +92,13 @@ public class ConnectFacebookActivity extends Activity {
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		uiHelper.onSaveInstanceState(outState);
+	}
+
+	@Override
+	public void onUserAuthenticated() {
+		Intent i = new Intent(ConnectFacebookActivity.this, PublicChatActivity.class);
+		startActivity(i);
+		finish();
 	}
 	
 	

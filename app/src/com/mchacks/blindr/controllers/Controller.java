@@ -3,6 +3,9 @@ package com.mchacks.blindr.controllers;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import android.content.Context;
+import android.util.TypedValue;
+
 import com.facebook.Session;
 import com.mchacks.blindr.models.User;
 
@@ -12,6 +15,7 @@ public class Controller {
 	private Session session;
 	private User myselfUser;
 	private ArrayList<String> privateChats;
+	private int dimensionAvatar;
 	
 	private static Controller controller;
 
@@ -38,7 +42,7 @@ public class Controller {
 	}
 	
 	public void addUser(User user){
-		users.put(user.getTokenId(), user);
+		users.put(user.getId(), user);
 	}
 	
 	public User getUser(String tokenId){
@@ -68,4 +72,18 @@ public class Controller {
 	public ArrayList<String> getMutualChats(){
 		return privateChats;
 	}
+	
+	private static int dpInPixels(Context context, int dp) {
+		return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources()
+		.getDisplayMetrics());
+	}
+	
+	public void setDimensionAvatar(Context context) {
+		dimensionAvatar = dpInPixels(context, 50);
+	}
+	
+	public int getDimensionAvatar() {
+		return dimensionAvatar;
+	}
+	
 }

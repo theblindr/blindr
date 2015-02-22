@@ -42,7 +42,7 @@ public class ChatAdapter extends ArraySwipeAdapter<Message> implements OnClickLi
 		Message message = messages.get(position);
 
 		if(convertView == null){ // Only inflating if necessary is great for performance
-			if(message.getUser().getTokenId().equals(Controller.getInstance().getMyself().getTokenId())){
+			if(message.getUser().getId().equals(Controller.getInstance().getMyself().getId())){
 				rowView = getInflater().inflate(R.layout.chat_odd, parent, false);
 			} else{
 				rowView = getInflater().inflate(R.layout.chat_even, parent, false);
@@ -96,7 +96,7 @@ public class ChatAdapter extends ArraySwipeAdapter<Message> implements OnClickLi
 	public void addMessage(Message message){
 		if(!messages.isEmpty()){
 			final Message lastMessage = messages.get(messages.size()-1);
-			if(lastMessage.getUser().getTokenId().equals(message.getUser().getTokenId())){
+			if(lastMessage.getUser().getId().equals(message.getUser().getId())){
 				lastMessage.addMessage(message.getMessage());
 			} else{
 				super.add(message);
