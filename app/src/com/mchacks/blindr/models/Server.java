@@ -18,6 +18,7 @@ import android.util.Log;
 import com.checkin.avatargenerator.AvatarGenerator;
 import com.mchacks.blindr.controllers.Controller;
 import com.mchacks.blindr.models.HTTPRequest.RequestType;
+import com.mchacks.blindr.models.HTTPRequest.StatusCode;
 
 public class Server {
 	
@@ -59,6 +60,9 @@ public class Server {
 				} catch (IOException e) {
 					Log.i("SERVER_INFOS", "Error while authenticating.");
 					e.printStackTrace();
+				} catch (Exception e) {
+					Log.i("SERVER_INFOS", "Something went wrong while authenticating.");
+					e.printStackTrace();
 				}
 			}
 			
@@ -98,6 +102,9 @@ public class Server {
 					}
 				} catch (IOException e) {
 					Log.i("SERVER_INOFS", "Error while receiving events: ");
+					e.printStackTrace();
+				} catch (Exception e) {
+					Log.i("SERVER_INFOS", "Something went wrong when fetching the events.");
 					e.printStackTrace();
 				}
 			}
@@ -249,6 +256,9 @@ public class Server {
 				} catch (IOException e) {
 					Log.i("SERVER_INFOS", "Something went wrong when fetching the old matches.");
 					e.printStackTrace();
+				} catch (Exception e) {
+					Log.i("SERVER_INFOS", "Something went wrong when fetching the old matches.");
+					e.printStackTrace();
 				}
 			}
 		};
@@ -283,6 +293,9 @@ public class Server {
 				} catch (IOException e) {
 					Log.i("SERVER_INFOS", "Something went wrong when fetching the old matches.");
 					e.printStackTrace();
+				} catch (Exception e) {
+					Log.i("SERVER_INFOS", "Something went wrong when fetching the old matches.");
+					e.printStackTrace();
 				}
 			}
 		};
@@ -313,7 +326,6 @@ public class Server {
 				super.onPostExecute(result);
 				try {
 					Log.i("SERVER_INFOS", "User pictures response: "+ result);
-					//String[] pictures = result.replace("[", "").replace("]", "").replace("\"", "").replace(" ", "").split(",");
 					List<String> pictures = new ArrayList<String>();
  					StringReader in = new StringReader(result);
 					JsonReader reader = new JsonReader(in);
@@ -328,6 +340,9 @@ public class Server {
 						listener.onProfilePicturesReceived(pictures);
 					}
 				} catch (IOException e) {
+					Log.i("SERVER_INFOS", "Something went wrong when fetching the pictures.");
+					e.printStackTrace();
+				} catch (Exception e) {
 					Log.i("SERVER_INFOS", "Something went wrong when fetching the pictures.");
 					e.printStackTrace();
 				}
