@@ -41,6 +41,18 @@ font-family: GraublauWeb;
 src: url("/css/raleway/fonts/Raleway_Thin.otf") format("opentype");
 }
 
+.circle
+{
+width:200px;
+height:200px;
+border-radius:50%;
+font-size:50px;
+color:#0097fd;
+line-height:200px;
+text-align:center;
+background:#fff;
+}
+
 hr.star-light,
 hr.star-primary {
     margin: 25px auto 30px;
