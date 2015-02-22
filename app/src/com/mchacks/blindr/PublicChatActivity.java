@@ -24,6 +24,7 @@ import com.mchacks.blindr.models.ChatAdapter;
 import com.mchacks.blindr.models.City;
 import com.mchacks.blindr.models.Event;
 import com.mchacks.blindr.models.EventsListener;
+import com.mchacks.blindr.models.Match;
 import com.mchacks.blindr.models.Message;
 import com.mchacks.blindr.models.Server;
 import com.mchacks.blindr.models.PrivateChatAdapter;
@@ -140,5 +141,11 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 			}
 		}
 
+	}
+
+	@Override
+	public void onOldMatchesReceives(List<Match> matches) {
+		// TODO Auto-generated method stub
+		
 	}
 }

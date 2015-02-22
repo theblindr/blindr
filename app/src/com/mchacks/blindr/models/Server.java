@@ -216,7 +216,38 @@ public class Server {
 	}
 	
 	public static void getMatches() {
-		// get les vieux matchs déjà fait
+		// get tous les matchs déjà fait
+		AsyncTask<String, Void, String> request = new AsyncTask<String, Void, String>() {
+
+			@Override
+			protected String doInBackground(String... arg0) {
+				String finalAddress = address + "events/like";
+				Log.i("SERVER_INOFS", "Like address: " + finalAddress);
+				
+				List<NameValuePair> headers = new ArrayList<NameValuePair>();
+				headers.add(new BasicNameValuePair("X-User-Token", arg0[0]));
+				
+				HTTPRequest request = new HTTPRequest(finalAddress, RequestType.GET, null, headers);
+				return request.getOutput();
+			}
+
+			@Override
+			protected void onPostExecute(String result) {
+				super.onPostExecute(result);
+				try {
+					Log.i("SERVER_INFOS", "Matches's response: "+ result);
+					List<Match> matches = readMatches(new StringReader(result));
+					for(EventsListener listener: eventsListeners) {
+						listener.onOldMatchesReceives(matches);
+					}
+				} catch (IOException e) {
+					Log.i("SERVER_INFOS", "Something went wrong when fetching the old matches.");
+					e.printStackTrace();
+				}
+			}
+			
+		};
+		request.execute(Controller.getInstance().getMyself().getId());
 	}
 	
 	public static void getUserEvents(User user) {
@@ -291,4 +322,39 @@ public class Server {
 		return EventBuilder.buildEvent(id, type, destination, timestamp, userId, message);
 	}
 	
+	private static List<Match> readMatches(Reader in) throws IOException {
+		List<Match> matches = new ArrayList<Match>();
+		JsonReader reader = new JsonReader(in);
+		reader.beginArray();
+		while(reader.hasNext()) {
+			matches.add(readMatch(reader));
+		}
+		reader.endArray();
+		reader.close();
+		return matches;
+	}
+	
+	private static Match readMatch(JsonReader reader) throws IOException {
+		reader.beginObject();
+		String userId = "";
+		Boolean mutual = false;
+		while(reader.hasNext()) {
+			String name = reader.nextName();
+			if(name.equals("other")) {
+				userId = reader.nextString();
+			}
+			else if(name.equals("mutual")) {
+				mutual = Boolean.parseBoolean(reader.nextString());
+			}
+			else {
+				reader.skipValue();
+			}
+		}
+		reader.endObject();
+		User user = Controller.getInstance().getUser(userId);
+		if(user != null) {
+			return new Match(null, null, Controller.getInstance().getMyself(), user, mutual);
+		}
+		return null;
+	}
 }
