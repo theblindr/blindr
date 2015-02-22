@@ -53,7 +53,7 @@ public class ChatAdapter extends ArraySwipeAdapter<Message> implements OnClickLi
 
 				ImageView avatar = (ImageView) rowView.findViewById(R.id.avatar);
 				avatar.setImageBitmap(message.getUser().getAvatar());
-				
+
 				rowView.findViewById(R.id.delete_user).setOnClickListener(this);
 				rowView.findViewById(R.id.like_user).setOnClickListener(this);
 
@@ -96,16 +96,17 @@ public class ChatAdapter extends ArraySwipeAdapter<Message> implements OnClickLi
 
 	public void addMessage(Message message){
 		if(!messages.isEmpty()){
-			final Message lastMessage = messages.get(messages.size()-1);
-			if(lastMessage.getUser().getId().equals(message.getUser().getId())){
-				lastMessage.addMessage(message.getMessage());
-			} else{
-				super.add(message);
+			if(!messages.contains(message)){
+				final Message lastMessage = messages.get(messages.size()-1);
+				if(lastMessage.getUser().getId().equals(message.getUser().getId())){
+					lastMessage.addMessage(message.getMessage(), message.getId());
+				} else{
+					super.add(message);
+				}
 			}
 		} else{
 			super.add(message);
 		}
-
 	}
 
 	public ArrayList<SwipeLayout> getSwipeLayoutsOpened(){
@@ -129,13 +130,13 @@ public class ChatAdapter extends ArraySwipeAdapter<Message> implements OnClickLi
 	@Override
 	public void onClose(SwipeLayout arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onHandRelease(SwipeLayout arg0, float arg1, float arg2) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -146,19 +147,19 @@ public class ChatAdapter extends ArraySwipeAdapter<Message> implements OnClickLi
 	@Override
 	public void onStartClose(SwipeLayout arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onStartOpen(SwipeLayout arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onUpdate(SwipeLayout arg0, int arg1, int arg2) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -170,9 +171,9 @@ public class ChatAdapter extends ArraySwipeAdapter<Message> implements OnClickLi
 				public void onPositiveClick() {
 					super.onPositiveClick();
 				}
-				
+
 			};
-			
+
 			dialog.show();
 			//Delete user from my database
 		} else if(v.getId() == R.id.like_user){
@@ -183,9 +184,9 @@ public class ChatAdapter extends ArraySwipeAdapter<Message> implements OnClickLi
 				public void onPositiveClick() {
 					super.onPositiveClick();
 				}
-				
+
 			};
-			
+
 			dialog.show();
 			dialog.setDialogText(R.string.want_to_like);
 		}
