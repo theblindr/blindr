@@ -147,5 +147,14 @@ public class Controller {
 		}
 		return false;
 	}
+
+	public boolean checkIfPendingMatch(Match match) {
+		for(Match m : matches){
+			if(!m.isMutual() && m.getMatchedUser().getId().equals(match.getMatchedUser().getId())){
+				return true;
+			}
+		}
+		return false;
+	}
 	
 }

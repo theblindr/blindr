@@ -180,7 +180,7 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 	}
 
 	@Override
-	public void onUserLiked(User user) {
+	public void onUserLiked(User user, String userFakeName) {
 		// TODO Auto-generated method stub
 		
 	}

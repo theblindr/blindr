@@ -2,6 +2,7 @@ package com.mchacks.blindr;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
@@ -184,6 +185,9 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 				}
 			} else if(e instanceof Match){
 				if(!Controller.getInstance().containsMatch((Match) e)){
+					if(Controller.getInstance().checkIfPendingMatch((Match) e)){
+						matchAdapter.remove((Match) e);
+					}
 					Controller.getInstance().addMatch((Match) e);
 					matchAdapter.add(((Match) e));
 					matchAdapter.notifyDataSetChanged();
@@ -218,8 +222,9 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 	}
 
 	@Override
-	public void onUserLiked(User user) {
-		// TODO Auto-generated method stub
-		
+	public void onUserLiked(User user, String userFakeName) {
+		Match match = new Match(UUID.randomUUID(), null, user, Controller.getInstance().getMyself(), false, null, userFakeName);
+		matchAdapter.add(match);
+		matchAdapter.notifyDataSetChanged();
 	}
 }

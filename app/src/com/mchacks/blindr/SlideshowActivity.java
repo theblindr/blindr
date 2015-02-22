@@ -91,6 +91,8 @@ public class SlideshowActivity extends Activity implements FacebookProfileListen
 	@Override
 	public void onProfilePicturesReceived(List<String> pictures) {
 		findViewById(R.id.progressBar).setVisibility(View.GONE);
+		findViewById(R.id.swipe_left).setVisibility(View.VISIBLE);
+		findViewById(R.id.swipe_right).setVisibility(View.VISIBLE);
 		for(String pic : pictures){
 			ImageView imageView = new ImageView(this);
 			mViewFlipper.addView(imageView);

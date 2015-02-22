@@ -16,7 +16,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:src="@drawable/swipe_left" />
+        android:src="@drawable/swipe_left"
+        android:visibility="gone" />
 
     <ImageView
         android:id="@+id/swipe_right"
@@ -24,7 +25,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:src="@drawable/swipe_right" />
+        android:src="@drawable/swipe_right"
+        android:visibility="gone" />
 
     <ProgressBar
         android:id="@+id/progressBar"
