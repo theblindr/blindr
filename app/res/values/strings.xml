@@ -10,5 +10,6 @@
     <string name="want_to_like">Do you really want to like this person?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="title_activity_private_chat">Private Chat</string>
 
 </resources>

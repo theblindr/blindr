@@ -21,7 +21,7 @@ public class EventBuilder {
 		}
 		
 		if(type.equals("message")) {
-			return new Message(id, timestamp, destinationObj, Controller.getInstance().getUser(userId), message);
+			return new Message(id, timestamp, destinationObj, Controller.getInstance().getUser(userId), message, true);
 		} else if(type.equals("match")) {
 			if (destinationObj instanceof User)
 				return new Match(id, timestamp, destinationObj, Controller.getInstance().getUser(userId));

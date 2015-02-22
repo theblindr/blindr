@@ -11,26 +11,37 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@color/main_color"
-        android:paddingLeft="10dp" >
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp" >
 
-        <ImageView
-            android:id="@+id/menu_private"
+        <com.checkin.avatargenerator.RoundedImageView
+            android:id="@+id/avatar"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_centerVertical="true"
-            android:background="@drawable/circle_white_sel"
+            android:background="@drawable/circle_white"
             android:src="@drawable/mail" />
 
         <TextView
-            android:id="@+id/city_name"
+            android:id="@+id/fbName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@id/menu_private"
+            android:layout_toRightOf="@id/avatar"
             android:text="@string/hello_world"
             android:textColor="@color/white"
             android:textSize="18sp" />
+        
+        <ImageView
+            android:id="@+id/photos"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/circle_white_sel"
+            android:src="@drawable/photo"
+            android:tint="@color/main_color" />
     </RelativeLayout>
 
     <View

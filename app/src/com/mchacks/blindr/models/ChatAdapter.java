@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.SwipeLayout.Status;
 import com.mchacks.blindr.R;
-import com.mchacks.blindr.controllers.Controller;
 import com.mchacks.blindr.views.CustomYesNoDialog;
 
 public class ChatAdapter extends ArraySwipeAdapter<Message> implements OnClickListener, SwipeLayout.SwipeListener{
@@ -24,11 +23,19 @@ public class ChatAdapter extends ArraySwipeAdapter<Message> implements OnClickLi
 	private ArrayList<SwipeLayout> swipeLayouts;
 
 	public ChatAdapter(Context context, ArrayList<Message> chatValue) {  
-		super(context,R.layout.chat_even, chatValue);
+		super(context,-1, chatValue);
 		mContext = context;     
 		messages = chatValue;     
 		swipeLayouts = new ArrayList<SwipeLayout>();
 	}
+
+	static class ViewHolder {
+		public TextView name;
+		public ImageView avatar;
+		public TextView message;
+		public SwipeLayout swipeLayout;
+	}
+
 
 	private LayoutInflater getInflater(){
 		if(mInflater == null)
@@ -42,40 +49,55 @@ public class ChatAdapter extends ArraySwipeAdapter<Message> implements OnClickLi
 		View rowView;
 		Message message = messages.get(position);
 
-		if(convertView == null){ // Only inflating if necessary is great for performance
-			if(message.getUser().getId().equals(Controller.getInstance().getMyself().getId())){
-				rowView = getInflater().inflate(R.layout.chat_odd, parent, false);
-			} else{
-				rowView = getInflater().inflate(R.layout.chat_even, parent, false);
+		android.util.Log.i("Blindr", "isIncoming="+message.isIncoming() + " message=" + message.getMessage());
+		if(!message.isIncoming()){
+			rowView = getInflater().inflate(R.layout.chat_odd, parent, false);
 
-				TextView name = (TextView) rowView.findViewById(R.id.name);
-				name.setText(message.getUser().getName());
-
-				ImageView avatar = (ImageView) rowView.findViewById(R.id.avatar);
-				avatar.setImageBitmap(message.getUser().getAvatar());
-
-				rowView.findViewById(R.id.delete_user).setOnClickListener(this);
-				rowView.findViewById(R.id.like_user).setOnClickListener(this);
-
-				SwipeLayout swipeLayout =  (SwipeLayout) rowView.findViewById(R.id.swipe_layout);
-				swipeLayouts.add(swipeLayout);
-				//set show mode.
-				swipeLayout.setShowMode(SwipeLayout.ShowMode.LayDown);
-
-				//set drag edge.
-				swipeLayout.setDragEdge(SwipeLayout.DragEdge.Right);
-
-				swipeLayout.addSwipeListener(this);
-
-			}
+			ViewHolder viewHolder = new ViewHolder();
+			viewHolder.name = null;
+			viewHolder.avatar = null;
+			viewHolder.swipeLayout = null;
+			viewHolder.message = (TextView) rowView.findViewById(R.id.message);
+			rowView.setTag(viewHolder);
 		} else{
-			rowView = convertView;
+			rowView = getInflater().inflate(R.layout.chat_even, parent, false);
+
+			ViewHolder viewHolder = new ViewHolder();
+			viewHolder.name = (TextView) rowView.findViewById(R.id.name);
+			viewHolder.avatar = (ImageView) rowView.findViewById(R.id.avatar);
+			viewHolder.message = (TextView) rowView.findViewById(R.id.message);
+			viewHolder.swipeLayout =  (SwipeLayout) rowView.findViewById(R.id.swipe_layout);
+
+			rowView.setTag(viewHolder);
+
 		}
 
+		// fill data
+		ViewHolder holder = (ViewHolder) rowView.getTag();
 
+		holder.message.setText(message.getMessage());
 
-		TextView mess = (TextView) rowView.findViewById(R.id.message);
-		mess.setText(message.getMessage());
+		if(holder.name != null){
+			holder.name.setText(message.getUser().getName());
+		}
+
+		if(holder.avatar != null){
+			holder.avatar.setImageBitmap(message.getUser().getAvatar());
+		}
+
+		if(holder.swipeLayout != null){
+			swipeLayouts.add(holder.swipeLayout);
+			//set show mode.
+			holder.swipeLayout.setShowMode(SwipeLayout.ShowMode.LayDown);
+
+			//set drag edge.
+			holder.swipeLayout.setDragEdge(SwipeLayout.DragEdge.Right);
+
+			holder.swipeLayout.addSwipeListener(this);
+
+			rowView.findViewById(R.id.delete_user).setOnClickListener(this);
+			rowView.findViewById(R.id.like_user).setOnClickListener(this);
+		}
 
 		return rowView;
 	}
