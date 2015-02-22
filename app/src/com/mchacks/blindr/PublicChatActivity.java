@@ -2,6 +2,10 @@ package com.mchacks.blindr;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import android.app.Activity;
 import android.content.Context;
@@ -26,7 +30,6 @@ import com.mchacks.blindr.models.Event;
 import com.mchacks.blindr.models.EventsListener;
 import com.mchacks.blindr.models.Match;
 import com.mchacks.blindr.models.Message;
-import com.mchacks.blindr.models.Server;
 import com.mchacks.blindr.models.PrivateChatAdapter;
 import com.mchacks.blindr.models.Server;
 import com.mchacks.blindr.models.User;
@@ -41,6 +44,8 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 	private SlidingMenu slidingMenu;
 	private ListView listPrivate;
 	private PrivateChatAdapter privateChatAdapter;
+	private ScheduledExecutorService scheduler;
+	private Future<?> future;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -84,11 +89,41 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 		privateChatAdapter = new PrivateChatAdapter(this, names);
 		listPrivate = (ListView) findViewById(R.id.list_private);
 		listPrivate.setAdapter(privateChatAdapter);
-		
-		Server.addEventsListener(this);
-		Server.getEvents();
-		
 
+		Server.addEventsListener(this);
+
+		scheduler = Executors.newSingleThreadScheduledExecutor();
+
+
+	}
+
+	@Override
+	public void onResume(){
+		super.onResume();
+		if(scheduler != null){
+			future = scheduler.scheduleAtFixedRate
+			(new Runnable() {
+				public void run() {
+					Server.getEvents();
+				}
+			}, 0, 5, TimeUnit.SECONDS);
+		}
+	}
+
+	@Override
+	public void onPause(){
+		super.onPause();
+		if(future != null){
+			future.cancel(true);
+		}
+	}
+	
+	@Override
+	public void onDestroy(){
+		super.onDestroy();
+		if(scheduler != null){
+			scheduler.shutdownNow();
+		}
 	}
 
 	@Override
@@ -138,6 +173,7 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 			android.util.Log.i("Blindr", "New event=" + e);
 			if(e instanceof Message && e.getDestination() instanceof City){
 				chatAdapter.addMessage((Message) e);
+				chatAdapter.notifyDataSetChanged();
 			}
 		}
 
