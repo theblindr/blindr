@@ -33,7 +33,7 @@ public class EventBuilder {
 			return new Message(id, timestamp, destinationObj, Controller.getInstance().getUser(userId), message, fakeName, gender, true, realName);
 		} else if(type.equals("match")) {
 			if (destinationObj instanceof User)
-				return new Match(id, timestamp, destinationObj, Controller.getInstance().getUser(userId), false, realName, fakeName);
+				return new Match(id, timestamp, destinationObj, Controller.getInstance().getUser(userId), true, realName, fakeName);
 			
 		}
 		
