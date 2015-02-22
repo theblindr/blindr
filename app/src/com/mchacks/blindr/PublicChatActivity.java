@@ -79,7 +79,6 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 		listMessages.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
 		listMessages.setStackFromBottom(true);
 
-
 		matchAdapter = new MatchAdapter(this, new ArrayList<User>());
 		listPrivate = (ListView) findViewById(R.id.list_private);
 		listPrivate.setAdapter(matchAdapter);
@@ -90,7 +89,6 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 		Server.getMatches();
 
 		scheduler = Executors.newSingleThreadScheduledExecutor();
-
 
 	}
 

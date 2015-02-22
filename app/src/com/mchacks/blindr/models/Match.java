@@ -23,7 +23,7 @@ public class Match extends Event{
 	}
 	
 	public User getMatchedUser(){
-		if(getUser().getId().equals(Controller.getInstance().getMyself().getId())){
+		if(!getUser().getId().equals(Controller.getInstance().getMyself().getId())){
 			return getUser();
 		}
 		

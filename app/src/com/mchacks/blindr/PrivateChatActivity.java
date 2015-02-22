@@ -40,7 +40,7 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 	private ScheduledExecutorService scheduler;
 	private Future<?> future;
 	private User remoteUser;
-	
+
 	public static void show(Context context, String tokenId){
 		Intent i = new Intent(context, PrivateChatActivity.class);
 		i.putExtra("tokenId", tokenId);
@@ -62,9 +62,9 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 		tf = Typeface.createFromAsset(getAssets(), "fonts/Raleway_Thin.otf");
 		fbName.setTypeface(tf);
 		fbName.setText(remoteUser.getName());
-		
+
 		((ImageView) findViewById(R.id.avatar)).setImageBitmap(remoteUser.getAvatar());
-		
+
 		editText = (EditText) findViewById(R.id.editText);
 		editText.clearFocus();
 
@@ -81,7 +81,6 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 
 		scheduler = Executors.newSingleThreadScheduledExecutor();
 
-
 	}
 
 	@Override
@@ -89,11 +88,11 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 		super.onResume();
 		if(scheduler != null){
 			future = scheduler.scheduleAtFixedRate
-			(new Runnable() {
-				public void run() {
-					Server.getEvents();
-				}
-			}, 0, 5, TimeUnit.SECONDS);
+					(new Runnable() {
+						public void run() {
+							Server.getEvents();
+						}
+					}, 0, 5, TimeUnit.SECONDS);
 		}
 	}
 
@@ -104,7 +103,7 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 			future.cancel(true);
 		}
 	}
-	
+
 	@Override
 	public void onDestroy(){
 		super.onDestroy();
@@ -123,29 +122,31 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 				chatAdapter.notifyDataSetChanged();
 				Server.sendPrivateMessage(remoteUser, message.getMessage());
 				editText.setText("");
-				scrollMyListViewToBottom();
+				scrollMyListViewToTheBottomNowWeHere();
 			}
 		}
 	}
-	
-	private void scrollMyListViewToBottom() {
-	    listMessages.post(new Runnable() {
-	        @Override
-	        public void run() {
-	            // Select the last row so it will scroll into view...
-	        	listMessages.setSelection(chatAdapter.getCount() - 1);
-	        }
-	    });
+
+	private void scrollMyListViewToTheBottomNowWeHere() {
+		listMessages.post(new Runnable() {
+			@Override
+			public void run() {
+				// Select the last row so it will scroll into view...
+				listMessages.setSelection(chatAdapter.getCount() - 1);
+			}
+		});
 	}
-	
+
 	@Override
 	public void onEventsReceived(List<Event> events) {
 		for(Event e : events){
 			android.util.Log.i("Blindr", "New event=" + e);
 			if(e instanceof Message && e.getDestination() instanceof User){
-				chatAdapter.addMessage((Message) e);
-				chatAdapter.notifyDataSetChanged();
-				scrollMyListViewToBottom();
+				if(((User) e.getDestination()).getId().equals(remoteUser.getId())){
+					chatAdapter.addMessage((Message) e);
+					chatAdapter.notifyDataSetChanged();
+					scrollMyListViewToTheBottomNowWeHere();
+				}
 			}
 		}
 
@@ -153,19 +154,26 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 
 	@Override
 	public void onOldMatchesReceives(List<Match> matches) {
-		// TODO Auto-generated method stub
-		
+		Controller.getInstance().setMatches(matches);
 	}
 
 	@Override
 	public void onUserHistoryReceived(List<Event> events) {
-		// TODO Auto-generated method stub
-		
+		for(Event e : events){
+			android.util.Log.i("Blindr", "New event=" + e);
+			if(e instanceof Message && e.getDestination() instanceof User){
+				if(((User) e.getDestination()).getId().equals(remoteUser.getId())){
+					chatAdapter.addMessage((Message) e);
+					chatAdapter.notifyDataSetChanged();
+					scrollMyListViewToTheBottomNowWeHere();
+				}
+			}
+		}
 	}
 
 	@Override
 	public void onProfilePicturesReceived(List<String> pictures) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

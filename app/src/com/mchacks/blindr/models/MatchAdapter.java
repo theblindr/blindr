@@ -7,10 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.daimajia.swipe.SwipeLayout;
 import com.mchacks.blindr.R;
 
 public class MatchAdapter extends ArrayAdapter<User>{
@@ -27,6 +25,7 @@ public class MatchAdapter extends ArrayAdapter<User>{
 	
 	static class ViewHolder {
 	    public TextView name;
+	    public TextView mutual;
 	  }
 
 	private LayoutInflater getInflater(){
@@ -45,6 +44,7 @@ public class MatchAdapter extends ArrayAdapter<User>{
 			
 			ViewHolder holder = new ViewHolder();
 			holder.name = (TextView) rowView.findViewById(R.id.name);
+			holder.mutual = (TextView) rowView.findViewById(R.id.mutual);
 			rowView.setTag(holder);
 		} else{
 			rowView = convertView;
