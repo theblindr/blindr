@@ -13,6 +13,7 @@ public class Message extends Event{
 	
 	public Message(UUID id, Timestamp timestamp, IDestination destination, User user, String message) {
 		super(id, timestamp, destination, user);
+		this.message = message;
 	}
 	
 	public String getMessage(){

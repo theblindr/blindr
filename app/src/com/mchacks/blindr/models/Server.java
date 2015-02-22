@@ -73,7 +73,7 @@ public class Server {
 				data.add(new BasicNameValuePair("city", arg0[1]));
 				
 				List<NameValuePair> headers = new ArrayList<NameValuePair>();
-				headers.add(new BasicNameValuePair("X-User-Token’", arg0[0]));
+				headers.add(new BasicNameValuePair("X-User-Token", arg0[0]));
 				
 				HTTPRequest request = new HTTPRequest(finalAddress, RequestType.GET, null, headers);
 				return request.getOutput();

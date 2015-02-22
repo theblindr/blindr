@@ -1,0 +1,11 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <!--  Finger interaction -->
+  <item android:state_focused="false" android:state_pressed="false" android:drawable="@color/white" />
+  <item android:state_focused="false" android:state_pressed="true" android:drawable="@color/grey" />
+  
+  <!--  Keyboard interaction -->
+  <item android:state_focused="true" android:state_pressed="false" android:drawable="@color/grey" />
+  <item android:state_focused="true" android:state_pressed="true" android:drawable="@color/white" />
+  
+</selector>

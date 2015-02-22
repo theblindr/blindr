@@ -1,6 +1,7 @@
 package com.mchacks.blindr;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
@@ -20,11 +21,15 @@ import com.checkin.avatargenerator.AvatarGenerator;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.mchacks.blindr.controllers.Controller;
 import com.mchacks.blindr.models.ChatAdapter;
+import com.mchacks.blindr.models.City;
+import com.mchacks.blindr.models.Event;
+import com.mchacks.blindr.models.EventsListener;
 import com.mchacks.blindr.models.Message;
 import com.mchacks.blindr.models.PrivateChatAdapter;
+import com.mchacks.blindr.models.Server;
 import com.mchacks.blindr.models.User;
 
-public class PublicChatActivity extends Activity implements OnClickListener {
+public class PublicChatActivity extends Activity implements OnClickListener, EventsListener {
 	private Typeface tf;
 	private ImageView sendBt;
 	private ChatAdapter chatAdapter;
@@ -78,6 +83,10 @@ public class PublicChatActivity extends Activity implements OnClickListener {
 		privateChatAdapter = new PrivateChatAdapter(this, names);
 		listPrivate = (ListView) findViewById(R.id.list_private);
 		listPrivate.setAdapter(privateChatAdapter);
+		
+		Server.addEventsListener(this);
+		Server.getEvents();
+		
 
 	}
 
@@ -121,4 +130,14 @@ public class PublicChatActivity extends Activity implements OnClickListener {
 		imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
 	}
 
+	@Override
+	public void onEventsReceived(List<Event> events) {
+		for(Event e : events){
+			android.util.Log.i("Blindr", "New event=" + e);
+			if(e instanceof Message && e.getDestination() instanceof City){
+				chatAdapter.addMessage((Message) e);
+			}
+		}
+
+	}
 }

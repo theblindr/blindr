@@ -14,6 +14,7 @@ import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.SwipeLayout.Status;
 import com.mchacks.blindr.R;
 import com.mchacks.blindr.controllers.Controller;
+import com.mchacks.blindr.views.CustomYesNoDialog;
 
 public class ChatAdapter extends ArraySwipeAdapter<Message> implements OnClickListener, SwipeLayout.SwipeListener{
 	private Context mContext;
@@ -139,7 +140,6 @@ public class ChatAdapter extends ArraySwipeAdapter<Message> implements OnClickLi
 
 	@Override
 	public void onOpen(SwipeLayout layout) {
-		android.util.Log.i("Blindr", "Swipe layout opened");
 		closeAllSwipeLayoutExcept(layout);
 	}
 
@@ -164,9 +164,30 @@ public class ChatAdapter extends ArraySwipeAdapter<Message> implements OnClickLi
 	@Override
 	public void onClick(View v) {
 		if(v.getId() == R.id.delete_user){
+			CustomYesNoDialog dialog = new CustomYesNoDialog(getContext()){
+
+				@Override
+				public void onPositiveClick() {
+					super.onPositiveClick();
+				}
+				
+			};
+			
+			dialog.show();
 			//Delete user from my database
 		} else if(v.getId() == R.id.like_user){
 			//Like user to database
+			CustomYesNoDialog dialog = new CustomYesNoDialog(getContext()){
+
+				@Override
+				public void onPositiveClick() {
+					super.onPositiveClick();
+				}
+				
+			};
+			
+			dialog.show();
+			dialog.setDialogText(R.string.want_to_like);
 		}
 	}
 }

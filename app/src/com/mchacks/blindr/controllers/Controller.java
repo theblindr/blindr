@@ -6,6 +6,7 @@ import java.util.HashMap;
 import android.content.Context;
 import android.util.TypedValue;
 
+import com.checkin.avatargenerator.AvatarGenerator;
 import com.facebook.Session;
 import com.mchacks.blindr.models.User;
 
@@ -46,6 +47,9 @@ public class Controller {
 	}
 	
 	public User getUser(String tokenId){
+		if(users.get(tokenId) == null){
+			users.put(tokenId, new User("user" + tokenId, AvatarGenerator.generate(dimensionAvatar, dimensionAvatar), tokenId));
+		}
 		return users.get(tokenId);
 	}
 	
