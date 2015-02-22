@@ -6,4 +6,7 @@ public interface EventsListener {
 	
 	public void onEventsReceived(List<Event> events);
 	
+	public void onOldMatchesReceives(List<Match> matches);
+	
+	public void onUserHistoryReceived(List<Event> events);
 }

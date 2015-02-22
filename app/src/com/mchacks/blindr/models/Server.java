@@ -31,9 +31,10 @@ public class Server {
 			@Override
 			protected String doInBackground(String... arg0) {
 				String finalAddress = address + "auth";
-				Log.i("SERVER_INOFS", "ReList<E>t address: " + finalAddress);
+				Log.i("SERVER_INFOS", "auth address: " + finalAddress);
 				List<NameValuePair> data = new ArrayList<NameValuePair>();
 				data.add(new BasicNameValuePair("fb_token", arg0[0]));
+				Log.i("SERVER_INFOS", "fb_token: " + arg0[0]);
 				HTTPRequest request = new HTTPRequest(finalAddress, RequestType.POST, data);
 				return request.getOutput();
 			}
@@ -216,11 +217,71 @@ public class Server {
 	}
 	
 	public static void getMatches() {
-		// get les vieux matchs déjà fait
+		// get tous les matchs déjà fait
+		AsyncTask<String, Void, String> request = new AsyncTask<String, Void, String>() {
+
+			@Override
+			protected String doInBackground(String... arg0) {
+				String finalAddress = address + "events/like";
+				Log.i("SERVER_INOFS", "Like address: " + finalAddress);
+				
+				List<NameValuePair> headers = new ArrayList<NameValuePair>();
+				headers.add(new BasicNameValuePair("X-User-Token", arg0[0]));
+				
+				HTTPRequest request = new HTTPRequest(finalAddress, RequestType.GET, null, headers);
+				return request.getOutput();
+			}
+
+			@Override
+			protected void onPostExecute(String result) {
+				super.onPostExecute(result);
+				try {
+					Log.i("SERVER_INFOS", "Matches's response: "+ result);
+					List<Match> matches = readMatches(new StringReader(result));
+					for(EventsListener listener: eventsListeners) {
+						listener.onOldMatchesReceives(matches);
+					}
+				} catch (IOException e) {
+					Log.i("SERVER_INFOS", "Something went wrong when fetching the old matches.");
+					e.printStackTrace();
+				}
+			}
+		};
+		request.execute(Controller.getInstance().getMyself().getId());
 	}
 	
 	public static void getUserEvents(User user) {
 		// get les events avec un user en particulier
+		AsyncTask<String, Void, String> request = new AsyncTask<String, Void, String>() {
+
+			@Override
+			protected String doInBackground(String... arg0) {
+				String finalAddress = address + "events/" + arg0[1];
+				Log.i("SERVER_INOFS", "Events avec user address: " + finalAddress);
+				
+				List<NameValuePair> headers = new ArrayList<NameValuePair>();
+				headers.add(new BasicNameValuePair("X-User-Token", arg0[0]));
+				
+				HTTPRequest request = new HTTPRequest(finalAddress, RequestType.GET, null, headers);
+				return request.getOutput();
+			}
+
+			@Override
+			protected void onPostExecute(String result) {
+				super.onPostExecute(result);
+				try {
+					Log.i("SERVER_INFOS", "User events response: "+ result);
+					List<Event> events = readEvents(new StringReader(result));
+					for(EventsListener listener: eventsListeners) {
+						listener.onUserHistoryReceived(events);
+					}
+				} catch (IOException e) {
+					Log.i("SERVER_INFOS", "Something went wrong when fetching the old matches.");
+					e.printStackTrace();
+				}
+			}
+		};
+		request.execute(Controller.getInstance().getMyself().getId(), user.getId());
 	}
 	
 	public static void addUserAuthenticatedListener(UserAuthenticatedListener listener) {
@@ -266,6 +327,8 @@ public class Server {
 		Timestamp timestamp = null;
 		String userId = null;
 		String message = null;
+		String gender = null;
+		String fakeName = null;
 		
 		reader.beginObject();
 		while(reader.hasNext()) {
@@ -282,13 +345,52 @@ public class Server {
 				userId = reader.nextString();
 			} else if (name.equals("message")) {
 				message = reader.nextString();
+			} else if(name.equals("src_gender")) {
+				gender = reader.nextString();
+			} else if(name.equals("src_fake_name")) {
+				fakeName = reader.nextString();
 			} else {
 				reader.skipValue();
 			}
 		}
 		reader.endObject();
 		
-		return EventBuilder.buildEvent(id, type, destination, timestamp, userId, message);
+		return EventBuilder.buildEvent(id, type, destination, timestamp, userId, message, gender, fakeName);
 	}
 	
+	private static List<Match> readMatches(Reader in) throws IOException {
+		List<Match> matches = new ArrayList<Match>();
+		JsonReader reader = new JsonReader(in);
+		reader.beginArray();
+		while(reader.hasNext()) {
+			matches.add(readMatch(reader));
+		}
+		reader.endArray();
+		reader.close();
+		return matches;
+	}
+	
+	private static Match readMatch(JsonReader reader) throws IOException {
+		reader.beginObject();
+		String userId = "";
+		Boolean mutual = false;
+		while(reader.hasNext()) {
+			String name = reader.nextName();
+			if(name.equals("other")) {
+				userId = reader.nextString();
+			}
+			else if(name.equals("mutual")) {
+				mutual = reader.nextBoolean();
+			}
+			else {
+				reader.skipValue();
+			}
+		}
+		reader.endObject();
+		User user = Controller.getInstance().getUser(userId);
+		if(user != null) {
+			return new Match(null, null, Controller.getInstance().getMyself(), user, mutual);
+		}
+		return null;
+	}
 }

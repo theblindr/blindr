@@ -23,13 +23,13 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.checkin.avatargenerator.AvatarGenerator;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.mchacks.blindr.controllers.Controller;
 import com.mchacks.blindr.models.ChatAdapter;
 import com.mchacks.blindr.models.City;
 import com.mchacks.blindr.models.Event;
 import com.mchacks.blindr.models.EventsListener;
+import com.mchacks.blindr.models.Match;
 import com.mchacks.blindr.models.MatchAdapter;
 import com.mchacks.blindr.models.Message;
 import com.mchacks.blindr.models.Server;
@@ -88,6 +88,7 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 
 
 		Server.addEventsListener(this);
+		Server.getMatches();
 
 		scheduler = Executors.newSingleThreadScheduledExecutor();
 
@@ -192,5 +193,15 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 	public void onItemClick(AdapterView<?> adapter, View v, int position, long arg3) {
 		PrivateChatActivity.show(this, ((User) adapter.getItemAtPosition(position)).getId());
 		slidingMenu.toggle(true);
+	}
+
+	public void onOldMatchesReceives(List<Match> matches) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onUserHistoryReceived(List<Event> events) {
+		// TODO Auto-generated method stub
 	}
 }
