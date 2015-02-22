@@ -23,14 +23,13 @@ import android.widget.TextView;
 import com.mchacks.blindr.controllers.Controller;
 import com.mchacks.blindr.models.Event;
 import com.mchacks.blindr.models.EventsListener;
-import com.mchacks.blindr.models.FacebookProfileListener;
 import com.mchacks.blindr.models.Match;
 import com.mchacks.blindr.models.Message;
 import com.mchacks.blindr.models.PrivateChatAdapter;
 import com.mchacks.blindr.models.Server;
 import com.mchacks.blindr.models.User;
 
-public class PrivateChatActivity extends Activity implements OnClickListener, EventsListener, FacebookProfileListener {
+public class PrivateChatActivity extends Activity implements OnClickListener, EventsListener {
 
 	private Typeface tf;
 	private ImageView sendBt;
@@ -41,9 +40,10 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 	private Future<?> future;
 	private User remoteUser;
 
-	public static void show(Context context, String tokenId){
+	public static void show(Context context, String tokenId, String realName){
 		Intent i = new Intent(context, PrivateChatActivity.class);
 		i.putExtra("tokenId", tokenId);
+		i.putExtra("realName", realName);
 		context.startActivity(i);
 	}
 
@@ -61,7 +61,7 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 
 		tf = Typeface.createFromAsset(getAssets(), "fonts/Raleway_Thin.otf");
 		fbName.setTypeface(tf);
-		fbName.setText(remoteUser.getName());
+		fbName.setText(getIntent().getStringExtra("realName"));
 
 		((ImageView) findViewById(R.id.avatar)).setImageBitmap(remoteUser.getAvatar());
 		findViewById(R.id.avatar).setOnClickListener(this);
@@ -81,7 +81,6 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 		listMessages.setStackFromBottom(true);
 
 		Server.addEventsListener(this);
-		Server.getUserEvents(remoteUser);
 		scheduler = Executors.newSingleThreadScheduledExecutor();
 
 	}
@@ -89,6 +88,7 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 	@Override
 	public void onResume(){
 		super.onResume();
+		Server.getUserEvents(remoteUser);
 		if(scheduler != null){
 			future = scheduler.scheduleAtFixedRate
 					(new Runnable() {
@@ -166,8 +166,8 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 
 	@Override
 	public void onUserHistoryReceived(List<Event> events) {
+		chatAdapter.clear();
 		for(Event e : events){
-			android.util.Log.i("Blindr", "New event=" + e);
 			if(e instanceof Message && e.getDestination() instanceof User){
 				if((e.getUser()).getId().equals(Controller.getInstance().getMyId())){
 					((Message) e).setIsIncoming(false);
@@ -177,11 +177,5 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 				scrollMyListViewToTheBottomNowWeHere();
 			}
 		}
-	}
-
-	@Override
-	public void onProfilePicturesReceived(List<String> pictures) {
-		// TODO Auto-generated method stub
-
 	}
 }

@@ -14,6 +14,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 
 public class ConnectFacebookActivity extends Activity implements UserAuthenticatedListener{
@@ -36,6 +37,8 @@ public class ConnectFacebookActivity extends Activity implements UserAuthenticat
 			session.refreshPermissions();
 			List<String> permissions = session.getPermissions();
 			Log.i("FACEBOOK_CONNECTION", "Logged in..." + permissions.toString());
+			findViewById(R.id.authButton).setVisibility(View.GONE);
+			findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
 			Server.connect(session.getAccessToken());
 		} else if(state.isClosed()) {
 			connected = false;
@@ -46,8 +49,6 @@ public class ConnectFacebookActivity extends Activity implements UserAuthenticat
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		Server.addUserAuthenticatedListener(this);
 
 		//Remove title bar
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -56,6 +57,9 @@ public class ConnectFacebookActivity extends Activity implements UserAuthenticat
 		
 		LoginButton authButton = (LoginButton)findViewById(R.id.authButton);
 		authButton.setReadPermissions(PERMISSIONS);
+		
+
+		Server.addUserAuthenticatedListener(this);
 		
 		uiHelper = new UiLifecycleHelper(this, callback);
 		uiHelper.onCreate(savedInstanceState);

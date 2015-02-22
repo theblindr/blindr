@@ -57,7 +57,12 @@ public class MatchAdapter extends ArrayAdapter<Match>{
 		final Match match = matches.get(position);
 		
 		String name = match.getMatchedUser().getName();
-		holder.name.setText(name);
+		
+		if(match.isMutual()){
+			holder.name.setText(match.getRealName());
+		} else{
+			holder.name.setText(name);
+		}
 		
 		holder.avatar.setImageBitmap(match.getMatchedUser().getAvatar());
 		

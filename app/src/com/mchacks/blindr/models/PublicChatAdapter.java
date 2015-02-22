@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,16 +12,15 @@ import android.widget.TextView;
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.SwipeLayout.Status;
 import com.mchacks.blindr.R;
-import com.mchacks.blindr.views.CustomYesNoDialog;
 
-public class ChatAdapter extends ArraySwipeAdapter<Message> implements OnClickListener, SwipeLayout.SwipeListener{
+public class PublicChatAdapter extends ArraySwipeAdapter<Message> implements SwipeLayout.SwipeListener{
 	private Context mContext;
 	private LayoutInflater mInflater = null;
 
 	private ArrayList<Message> messages;
 	private ArrayList<SwipeLayout> swipeLayouts;
 
-	public ChatAdapter(Context context, ArrayList<Message> chatValue) {  
+	public PublicChatAdapter(Context context, ArrayList<Message> chatValue) {  
 		super(context,-1, chatValue);
 		mContext = context;     
 		messages = chatValue;     
@@ -95,8 +93,8 @@ public class ChatAdapter extends ArraySwipeAdapter<Message> implements OnClickLi
 
 			holder.swipeLayout.addSwipeListener(this);
 
-			rowView.findViewById(R.id.delete_user).setOnClickListener(this);
-			rowView.findViewById(R.id.like_user).setOnClickListener(this);
+			rowView.findViewById(R.id.delete_user).setOnClickListener(new ClickListenerSwipe(mContext, message.getUser()));
+			rowView.findViewById(R.id.like_user).setOnClickListener(new ClickListenerSwipe(mContext, message.getUser()));
 		}
 
 		return rowView;
@@ -182,37 +180,5 @@ public class ChatAdapter extends ArraySwipeAdapter<Message> implements OnClickLi
 	public void onUpdate(SwipeLayout arg0, int arg1, int arg2) {
 		// TODO Auto-generated method stub
 
-	}
-
-	@Override
-	public void onClick(View v) {
-		if(v.getId() == R.id.delete_user){
-			CustomYesNoDialog dialog = new CustomYesNoDialog(getContext()){
-
-				@Override
-				public void onPositiveClick() {
-					super.onPositiveClick();
-				}
-
-			};
-
-			dialog.show();
-			//Delete user from my database
-		} else if(v.getId() == R.id.like_user){
-			//Like user to database
-			final User user = messages.get(0).getUser();
-			CustomYesNoDialog dialog = new CustomYesNoDialog(getContext()){
-
-				@Override
-				public void onPositiveClick() {
-					super.onPositiveClick();
-					Server.like(user);
-				}
-
-			};
-
-			dialog.show();
-			dialog.setDialogText(getContext().getString(R.string.want_to_like, user.getName()));
-		}
 	}
 }

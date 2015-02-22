@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.TypedValue;
 
 import com.checkin.avatargenerator.AvatarGenerator;
 import com.facebook.Session;
+import com.mchacks.blindr.R;
 import com.mchacks.blindr.models.City;
 import com.mchacks.blindr.models.Match;
 import com.mchacks.blindr.models.User;
@@ -100,6 +103,40 @@ public class Controller {
 	
 	public int getDimensionAvatar() {
 		return dimensionAvatar;
+	}
+	
+	public void addBlockPerson(Activity activity, String id){
+		SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = sharedPref.edit();
+		String blocked = getBlockedPeopleString(activity);
+		if(blocked.isEmpty()){
+			blocked = id;
+		} else{
+			blocked += "," + id;
+		}
+		editor.putString("blockedList", blocked);
+		editor.commit();
+	}
+	
+	private String getBlockedPeopleString(Activity activity){
+		SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+		String blocked = sharedPref.getString("blockedList", "");
+
+		return blocked;
+		
+	}
+	
+	public ArrayList<String> getBlockedPeople(Activity activity){
+		SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+		String blocked = sharedPref.getString("blockedList", "");
+		
+		ArrayList<String> blockedPeople = new ArrayList<String>();
+		for(String b : blocked.split(",")){
+			blockedPeople.add(b);
+		}
+		
+		return blockedPeople;
+		
 	}
 	
 }
