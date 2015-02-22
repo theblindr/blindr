@@ -138,5 +138,14 @@ public class Controller {
 		return blockedPeople;
 		
 	}
+
+	public boolean containsMatch(Match match) {
+		for(Match m : matches){
+			if(m.getId().equals(match.getId())){
+				return true;
+			}
+		}
+		return false;
+	}
 	
 }

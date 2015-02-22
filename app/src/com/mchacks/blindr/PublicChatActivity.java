@@ -182,7 +182,7 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 					scrollMyListViewToBottom();
 				}
 			} else if(e instanceof Match){
-				if(!Controller.getInstance().getMatches().contains((Match) e)){
+				if(!Controller.getInstance().containsMatch((Match) e)){
 					Controller.getInstance().addMatch((Match) e);
 					matchAdapter.add(((Match) e));
 					matchAdapter.notifyDataSetChanged();
