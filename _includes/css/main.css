@@ -4,6 +4,11 @@
  * For details, see http://www.apache.org/licenses/LICENSE-2.0.
  */
 
+html, body {
+  width: auto !important;
+  overflow-x: hidden !important;
+}
+
 body {
     overflow-x: hidden;
 }
