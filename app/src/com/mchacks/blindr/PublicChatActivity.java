@@ -25,6 +25,7 @@ import com.mchacks.blindr.models.City;
 import com.mchacks.blindr.models.Event;
 import com.mchacks.blindr.models.EventsListener;
 import com.mchacks.blindr.models.Message;
+import com.mchacks.blindr.models.Server;
 import com.mchacks.blindr.models.PrivateChatAdapter;
 import com.mchacks.blindr.models.Server;
 import com.mchacks.blindr.models.User;
@@ -53,8 +54,7 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 
 		tf = Typeface.createFromAsset(getAssets(), "fonts/Raleway_Thin.otf");
 		city.setTypeface(tf);
-		city.setText(Controller.getInstance().getCity());
-
+		city.setText(Controller.getInstance().getCity().getId());
 		editText = (EditText) findViewById(R.id.editText);
 		editText.clearFocus();
 
@@ -109,6 +109,7 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 				Message message = new Message(Controller.getInstance().getMyself(), text);
 				chatAdapter.addMessage(message);
 				chatAdapter.notifyDataSetChanged();
+				Server.sendPublicMessage(Controller.getInstance().getCity(), message.getMessage());
 				editText.setText("");
 			}
 		} else if(v.getId() == R.id.menu_private){

@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,7 +80,7 @@ public class HTTPRequest {
 		try {
 			if (requestType == RequestType.GET) {
 				if(data != null) {
-					URL += URLEncodedUtils.format(data, "utf-8");
+					URL += "?"+URLEncodedUtils.format(data, "utf-8");
 				}
 				HttpGet httpGet = new HttpGet(URL);
 				httpRequest = httpGet;
