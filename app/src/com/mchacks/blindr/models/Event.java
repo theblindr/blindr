@@ -4,7 +4,8 @@ import java.sql.Timestamp;
 import java.util.UUID;
 
 public abstract class Event {
-
+	
+	
 	private UUID id;
 	private Timestamp timestamp;
 	private IDestination destination;

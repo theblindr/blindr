@@ -1,6 +1,5 @@
 package com.mchacks.blindr;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.facebook.Session;
@@ -19,6 +18,9 @@ import android.view.Window;
 
 public class ConnectFacebookActivity extends Activity implements UserAuthenticatedListener{
 
+	private static final String[] PERMISSIONS = {"public_profile", "user_photos"};
+	private boolean connected = false;
+	
 	private UiLifecycleHelper uiHelper;
 
 	private Session.StatusCallback callback = new Session.StatusCallback() {
@@ -29,12 +31,14 @@ public class ConnectFacebookActivity extends Activity implements UserAuthenticat
 	
 	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
 		Controller.getInstance().setSession(session);
-		if(state.isOpened()) {
+		if(state.isOpened() && !connected){
+			connected = true;
+			session.refreshPermissions();
 			List<String> permissions = session.getPermissions();
 			Log.i("FACEBOOK_CONNECTION", "Logged in..." + permissions.toString());
-			
 			Server.connect(session.getAccessToken());
 		} else if(state.isClosed()) {
+			connected = false;
 			Log.i("FACEBOOK_CONNECTION", "Logged out...");
 		}
 	}
@@ -51,7 +55,7 @@ public class ConnectFacebookActivity extends Activity implements UserAuthenticat
 		setContentView(R.layout.connect_facebook);
 		
 		LoginButton authButton = (LoginButton)findViewById(R.id.authButton);
-		authButton.setReadPermissions(Arrays.asList("public_profile"));
+		authButton.setReadPermissions(PERMISSIONS);
 		
 		uiHelper = new UiLifecycleHelper(this, callback);
 		uiHelper.onCreate(savedInstanceState);

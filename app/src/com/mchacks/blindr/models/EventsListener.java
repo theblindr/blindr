@@ -8,4 +8,5 @@ public interface EventsListener {
 	
 	public void onOldMatchesReceives(List<Match> matches);
 	
+	public void onUserHistoryReceived(List<Event> events);
 }

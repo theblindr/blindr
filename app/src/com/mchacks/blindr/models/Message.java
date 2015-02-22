@@ -4,21 +4,30 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.UUID;
 
+
+
 public class Message extends Event{
+
+	public enum Gender {
+		Male, Female, Custom
+	};
+	
 	private String message;
 	private ArrayList<UUID> idsMessage;
+	private String fakeName;
+	private Gender gender;
 
 	public Message(User user, String message){
-		super(null, null, null, user);
-		this.message = message;
-		idsMessage = new ArrayList<UUID>();
+		this(null, null, null, user, message, null, Gender.Custom);
 	}
 
-	public Message(UUID id, Timestamp timestamp, IDestination destination, User user, String message) {
+	public Message(UUID id, Timestamp timestamp, IDestination destination, User user, String message, String fakeName, Gender gender) {
 		super(id, timestamp, destination, user);
 		this.message = message;
 		idsMessage = new ArrayList<UUID>();
 		idsMessage.add(id);
+		this.fakeName = fakeName;
+		this.gender = gender;
 	}
 
 	public String getMessage(){
@@ -45,7 +54,18 @@ public class Message extends Event{
 
 		return false;
 	}
+	
+	public String getFakeName() {
+		return fakeName;
+	}
+	
+	public void setFakeName(String name) {
+		fakeName = name;
+	}
 
 
+	public Gender getGender() {
+		return gender;
+	}
 
 }

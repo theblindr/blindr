@@ -4,10 +4,11 @@ import java.sql.Timestamp;
 import java.util.UUID;
 
 import com.mchacks.blindr.controllers.Controller;
+import com.mchacks.blindr.models.Message.Gender;
 
 public class EventBuilder {
 	
-	public static Event buildEvent(UUID id, String type, String destination, Timestamp timestamp, String userId, String message){
+	public static Event buildEvent(UUID id, String type, String destination, Timestamp timestamp, String userId, String message, String genderStr, String fakeName){
 		
 		IDestination destinationObj;
 		String[] parts = destination.split(":");
@@ -20,15 +21,20 @@ public class EventBuilder {
 			return null;
 		}
 		
+		
 		if(type.equals("message")) {
-			return new Message(id, timestamp, destinationObj, Controller.getInstance().getUser(userId), message);
+			Gender gender = Gender.Custom;
+			if(genderStr != null) {
+				if(genderStr.toLowerCase().equals("m"))
+					gender = Gender.Male;
+				else if(genderStr.toLowerCase().equals("f"))
+					gender = Gender.Female;
+			}
+			return new Message(id, timestamp, destinationObj, Controller.getInstance().getUser(userId), message, fakeName, gender);
 		} else if(type.equals("match")) {
 			if (destinationObj instanceof User)
-				return new Match(id, timestamp, destinationObj, Controller.getInstance().getUser(userId));
+				return new Match(id, timestamp, destinationObj, Controller.getInstance().getUser(userId), false);
 			
-		} else if(type.equals("profile_available")) {
-			if (destinationObj instanceof User)
-				return new Match(id, timestamp, destinationObj, Controller.getInstance().getUser(userId));
 		}
 		
 		return null;

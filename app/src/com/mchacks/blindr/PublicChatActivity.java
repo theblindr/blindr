@@ -91,6 +91,7 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 		listPrivate.setAdapter(privateChatAdapter);
 
 		Server.addEventsListener(this);
+		Server.getMatches();
 
 		scheduler = Executors.newSingleThreadScheduledExecutor();
 
@@ -181,6 +182,12 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 
 	@Override
 	public void onOldMatchesReceives(List<Match> matches) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onUserHistoryReceived(List<Event> events) {
 		// TODO Auto-generated method stub
 		
 	}
