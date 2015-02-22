@@ -15,7 +15,6 @@ public class Message extends Event{
 	private String message;
 	private ArrayList<UUID> idsMessage;
 	private boolean isIncoming;
-	private String fakeName;
 	private Gender gender;
 
 	public Message(User user, String message, boolean isIncoming){
@@ -23,12 +22,11 @@ public class Message extends Event{
 	}
 
 	public Message(UUID id, Timestamp timestamp, IDestination destination, User user, String message, String fakeName, Gender gender, boolean isIncoming, String realName) {
-		super(id, timestamp, destination, user, realName);
+		super(id, timestamp, destination, user, realName, fakeName);
 		this.message = message;
 		this.isIncoming = isIncoming;
 		idsMessage = new ArrayList<UUID>();
 		idsMessage.add(id);
-		this.fakeName = fakeName;
 		this.gender = gender;
 	}
 
@@ -62,15 +60,6 @@ public class Message extends Event{
 
 		return false;
 	}
-
-	public String getFakeName() {
-		return fakeName;
-	}
-
-	public void setFakeName(String name) {
-		fakeName = name;
-	}
-
 
 	public Gender getGender() {
 		return gender;
