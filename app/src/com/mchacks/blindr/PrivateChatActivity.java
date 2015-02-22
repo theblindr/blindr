@@ -21,12 +21,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.mchacks.blindr.controllers.Controller;
-import com.mchacks.blindr.models.ChatAdapter;
 import com.mchacks.blindr.models.Event;
 import com.mchacks.blindr.models.EventsListener;
 import com.mchacks.blindr.models.FacebookProfileListener;
 import com.mchacks.blindr.models.Match;
 import com.mchacks.blindr.models.Message;
+import com.mchacks.blindr.models.PrivateChatAdapter;
 import com.mchacks.blindr.models.Server;
 import com.mchacks.blindr.models.User;
 
@@ -34,7 +34,7 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 
 	private Typeface tf;
 	private ImageView sendBt;
-	private ChatAdapter chatAdapter;
+	private PrivateChatAdapter chatAdapter;
 	private ListView listMessages;
 	private EditText editText;
 	private ScheduledExecutorService scheduler;
@@ -65,6 +65,8 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 
 		((ImageView) findViewById(R.id.avatar)).setImageBitmap(remoteUser.getAvatar());
 		findViewById(R.id.avatar).setOnClickListener(this);
+		
+		findViewById(R.id.photos).setOnClickListener(this);
 
 		editText = (EditText) findViewById(R.id.editText);
 		editText.clearFocus();
@@ -72,7 +74,7 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 		sendBt = (ImageView) findViewById(R.id.send);
 		sendBt.setOnClickListener(this);
 
-		chatAdapter = new ChatAdapter(this, new ArrayList<Message>());
+		chatAdapter = new PrivateChatAdapter(this, new ArrayList<Message>());
 		listMessages = (ListView) findViewById(R.id.list);
 		listMessages.setAdapter(chatAdapter);
 		listMessages.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
@@ -127,6 +129,8 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 			}
 		} else if(v.getId() == R.id.avatar){
 			onBackPressed();
+		} else if(v.getId() == R.id.photos){
+			SlideshowActivity.show(this, remoteUser.getId());
 		}
 	}
 

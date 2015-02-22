@@ -182,9 +182,11 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 				chatAdapter.notifyDataSetChanged();
 				scrollMyListViewToBottom();
 			} else if(e instanceof Match){
-				Controller.getInstance().addMatch((Match) e);
-				matchAdapter.add(((Match) e));
-				matchAdapter.notifyDataSetChanged();
+				if(Controller.getInstance().getMatches().contains((Match) e)){
+					Controller.getInstance().addMatch((Match) e);
+					matchAdapter.add(((Match) e));
+					matchAdapter.notifyDataSetChanged();
+				}
 			}
 		}
 
@@ -198,7 +200,7 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 
 	public void onOldMatchesReceives(List<Match> matches) {
 		Controller.getInstance().setMatches(matches);
-		
+
 		for(Match match : Controller.getInstance().getMatches()){
 			matchAdapter.add(match);
 		}

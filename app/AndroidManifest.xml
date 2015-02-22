@@ -51,6 +51,10 @@
             android:name=".PrivateChatActivity"
             android:label="@string/title_activity_private_chat" >
         </activity>
+        <activity
+            android:name=".SlideshowActivity"
+            android:label="@string/title_activity_slideshow" >
+        </activity>
     </application>
 
 </manifest>

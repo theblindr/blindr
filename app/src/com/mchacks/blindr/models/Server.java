@@ -48,13 +48,13 @@ public class Server {
 				try {
 					userId = readUserToken(new StringReader(result));
 					Log.i("SERVER_INFOS", "Auth response's userId: "+ userId);
-					Controller.getInstance().setMyOwnUser(new User("Marc-Antoine", AvatarGenerator.generate(Controller.getInstance().getDimensionAvatar(), Controller.getInstance().getDimensionAvatar()), userId));
+					Controller.getInstance().setMyOwnUser(new User(null, AvatarGenerator.generate(Controller.getInstance().getDimensionAvatar(), Controller.getInstance().getDimensionAvatar()), userId));
 					for(UserAuthenticatedListener listener: userAuthenticatedListeners) {
 						listener.onUserAuthenticated();
 					}
 					
 					
-					getUserFacebookInfos(new User("", null, "602452146528719"));
+					//getUserFacebookInfos(new User("", null, "602452146528719"));
 					
 				} catch (IOException e) {
 					Log.i("SERVER_INFOS", "Error while authenticating.");

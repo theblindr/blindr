@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mchacks.blindr.R;
@@ -26,6 +27,7 @@ public class MatchAdapter extends ArrayAdapter<Match>{
 	static class ViewHolder {
 	    public TextView name;
 	    public TextView mutual;
+	    public ImageView avatar;
 	  }
 
 	private LayoutInflater getInflater(){
@@ -45,6 +47,7 @@ public class MatchAdapter extends ArrayAdapter<Match>{
 			ViewHolder holder = new ViewHolder();
 			holder.name = (TextView) rowView.findViewById(R.id.name);
 			holder.mutual = (TextView) rowView.findViewById(R.id.mutual);
+			holder.avatar = (ImageView) rowView.findViewById(R.id.avatar);
 			rowView.setTag(holder);
 		} else{
 			rowView = convertView;
@@ -55,6 +58,8 @@ public class MatchAdapter extends ArrayAdapter<Match>{
 		
 		String name = match.getMatchedUser().getName();
 		holder.name.setText(name);
+		
+		holder.avatar.setImageBitmap(match.getMatchedUser().getAvatar());
 		
 		if(match.isMutual()){
 			holder.mutual.setText("Click here to chat");
