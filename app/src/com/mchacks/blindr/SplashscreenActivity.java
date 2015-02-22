@@ -18,7 +18,6 @@ import android.os.Handler;
 import android.view.Window;
 import android.widget.TextView;
 
-import com.checkin.avatargenerator.AvatarGenerator;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -26,7 +25,6 @@ import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListe
 import com.google.android.gms.location.LocationServices;
 import com.mchacks.blindr.controllers.Controller;
 import com.mchacks.blindr.models.City;
-import com.mchacks.blindr.models.User;
 
 public class SplashscreenActivity extends Activity implements
 ConnectionCallbacks, OnConnectionFailedListener {
@@ -93,13 +91,12 @@ ConnectionCallbacks, OnConnectionFailedListener {
 		mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
 				mGoogleApiClient);
 		if (mLastLocation != null) {
-			Geocoder geoCoder = new Geocoder(this, Locale.getDefault());
+			Geocoder geoCoder = new Geocoder(this, Locale.CANADA);
 			try {
 				List<Address> address = geoCoder.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1);
 				final String city = address.get(0).getLocality();
 				android.util.Log.i("Blindr", "City name=" + city);
 				Controller.getInstance().setCity(new City(city));
-				//Controller.getInstance().setMyOwnUser(new User("Marc-Antoine", AvatarGenerator.generate(this, 50, 50), "vagin"));
 				Intent i = new Intent(SplashscreenActivity.this, ConnectFacebookActivity.class);
 				startActivity(i);
 				finish();

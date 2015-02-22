@@ -25,20 +25,19 @@ import android.widget.TextView;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.mchacks.blindr.controllers.Controller;
-import com.mchacks.blindr.models.ChatAdapter;
 import com.mchacks.blindr.models.City;
 import com.mchacks.blindr.models.Event;
 import com.mchacks.blindr.models.EventsListener;
 import com.mchacks.blindr.models.Match;
 import com.mchacks.blindr.models.MatchAdapter;
 import com.mchacks.blindr.models.Message;
+import com.mchacks.blindr.models.PublicChatAdapter;
 import com.mchacks.blindr.models.Server;
-import com.mchacks.blindr.models.User;
 
 public class PublicChatActivity extends Activity implements OnClickListener, EventsListener, OnItemClickListener {
 	private Typeface tf;
 	private ImageView sendBt;
-	private ChatAdapter chatAdapter;
+	private PublicChatAdapter chatAdapter;
 	private ListView listMessages;
 	private EditText editText;
 	private ImageView menuPrivate;
@@ -73,7 +72,7 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 		menuPrivate = (ImageView) findViewById(R.id.menu_private);
 		menuPrivate.setOnClickListener(this);
 
-		chatAdapter = new ChatAdapter(this, new ArrayList<Message>());
+		chatAdapter = new PublicChatAdapter(this, new ArrayList<Message>());
 		listMessages = (ListView) findViewById(R.id.list);
 		listMessages.setAdapter(chatAdapter);
 		listMessages.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
@@ -176,15 +175,18 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 	@Override
 	public void onEventsReceived(List<Event> events) {
 		for(Event e : events){
-			android.util.Log.i("Blindr", "New event=" + e);
 			if(e instanceof Message && e.getDestination() instanceof City){
-				chatAdapter.addMessage((Message) e);
-				chatAdapter.notifyDataSetChanged();
-				scrollMyListViewToBottom();
+				if(!Controller.getInstance().getBlockedPeople(this).contains(((Message) e).getUser().getId())){
+					chatAdapter.addMessage((Message) e);
+					chatAdapter.notifyDataSetChanged();
+					scrollMyListViewToBottom();
+				}
 			} else if(e instanceof Match){
-				Controller.getInstance().addMatch((Match) e);
-				matchAdapter.add(((Match) e));
-				matchAdapter.notifyDataSetChanged();
+				if(!Controller.getInstance().getMatches().contains((Match) e)){
+					Controller.getInstance().addMatch((Match) e);
+					matchAdapter.add(((Match) e));
+					matchAdapter.notifyDataSetChanged();
+				}
 			}
 		}
 
@@ -192,13 +194,17 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View v, int position, long arg3) {
-		PrivateChatActivity.show(this, ((Match) adapter.getItemAtPosition(position)).getMatchedUser().getId());
-		slidingMenu.toggle(true);
+		Match m = ((Match) adapter.getItemAtPosition(position));
+		if(m.isMutual()){
+			PrivateChatActivity.show(this, m.getMatchedUser().getId(), m.getRealName());
+			slidingMenu.toggle(true);
+		}
+		
 	}
 
 	public void onOldMatchesReceives(List<Match> matches) {
 		Controller.getInstance().setMatches(matches);
-		
+
 		for(Match match : Controller.getInstance().getMatches()){
 			matchAdapter.add(match);
 		}
