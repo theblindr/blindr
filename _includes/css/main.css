@@ -36,6 +36,12 @@ h6 {
     font-weight: 700;
 }
 
+#logo-blindr{
+    text-transform: uppercase;
+    font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight: 700;    
+}
+
 hr.star-light,
 hr.star-primary {
     margin: 25px auto 30px;
