@@ -385,6 +385,7 @@ public class Server {
 		String message = null;
 		String gender = null;
 		String fakeName = null;
+		String realName = null;
 		
 		reader.beginObject();
 		while(reader.hasNext()) {
@@ -405,13 +406,15 @@ public class Server {
 				gender = reader.nextString();
 			} else if(name.equals("src_fake_name")) {
 				fakeName = reader.nextString();
-			} else {
+			} else if(name.equals("src_real_name")) {
+				realName = reader.nextString();
+			}else {
 				reader.skipValue();
 			}
 		}
 		reader.endObject();
 		
-		return EventBuilder.buildEvent(id, type, destination, timestamp, userId, message, gender, fakeName);
+		return EventBuilder.buildEvent(id, type, destination, timestamp, userId, message, gender, fakeName, realName);
 	}
 	
 	private static List<Match> readMatches(Reader in) throws IOException {
@@ -445,7 +448,7 @@ public class Server {
 		reader.endObject();
 		User user = Controller.getInstance().getUser(userId);
 		if(user != null) {
-			return new Match(null, null, Controller.getInstance().getMyself(), user, mutual);
+			return new Match(null, null, Controller.getInstance().getMyself(), user, mutual, null);
 		}
 		return null;
 	}

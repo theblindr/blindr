@@ -8,7 +8,7 @@ import com.mchacks.blindr.models.Message.Gender;
 
 public class EventBuilder {
 	
-	public static Event buildEvent(UUID id, String type, String destination, Timestamp timestamp, String userId, String message, String genderStr, String fakeName){
+	public static Event buildEvent(UUID id, String type, String destination, Timestamp timestamp, String userId, String message, String genderStr, String fakeName, String realName){
 		
 		IDestination destinationObj;
 		String[] parts = destination.split(":");
@@ -30,10 +30,10 @@ public class EventBuilder {
 				else if(genderStr.toLowerCase().equals("f"))
 					gender = Gender.Female;
 			}
-			return new Message(id, timestamp, destinationObj, Controller.getInstance().getUser(userId), message, fakeName, gender, true);
+			return new Message(id, timestamp, destinationObj, Controller.getInstance().getUser(userId), message, fakeName, gender, true, realName);
 		} else if(type.equals("match")) {
 			if (destinationObj instanceof User)
-				return new Match(id, timestamp, destinationObj, Controller.getInstance().getUser(userId), false);
+				return new Match(id, timestamp, destinationObj, Controller.getInstance().getUser(userId), false, realName);
 			
 		}
 		

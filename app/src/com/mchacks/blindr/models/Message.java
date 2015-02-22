@@ -19,11 +19,11 @@ public class Message extends Event{
 	private Gender gender;
 
 	public Message(User user, String message, boolean isIncoming){
-		this(UUID.randomUUID(), null, null, user, message, null, Gender.Custom, isIncoming);
+		this(UUID.randomUUID(), null, null, user, message, null, Gender.Custom, isIncoming, null);
 	}
 
-	public Message(UUID id, Timestamp timestamp, IDestination destination, User user, String message, String fakeName, Gender gender, boolean isIncoming) {
-		super(id, timestamp, destination, user);
+	public Message(UUID id, Timestamp timestamp, IDestination destination, User user, String message, String fakeName, Gender gender, boolean isIncoming, String realName) {
+		super(id, timestamp, destination, user, realName);
 		this.message = message;
 		this.isIncoming = isIncoming;
 		idsMessage = new ArrayList<UUID>();
