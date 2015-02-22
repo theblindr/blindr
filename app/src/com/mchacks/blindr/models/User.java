@@ -2,7 +2,7 @@ package com.mchacks.blindr.models;
 
 import android.graphics.Bitmap;
 
-public class User {
+public class User implements IDestination{
 	private Bitmap avatar;
 	private String name;
 	private String tokenId;
@@ -20,8 +20,8 @@ public class User {
 	public String getName(){
 		return name;
 	}
-	
-	public String getTokenId(){
+
+	public String getId() {
 		return tokenId;
 	}
 }

@@ -1,20 +1,22 @@
 package com.mchacks.blindr.models;
 
-public class Message {
-	private User user;
+import java.sql.Timestamp;
+import java.util.UUID;
+
+public class Message extends Event{
 	private String message;
 	
 	public Message(User user, String message){
-		this.user = user;
+		super(null, null, null, user);
 		this.message = message;
+	}
+	
+	public Message(UUID id, Timestamp timestamp, IDestination destination, User user, String message) {
+		super(id, timestamp, destination, user);
 	}
 	
 	public String getMessage(){
 		return message;
-	}
-	
-	public User getUser(){
-		return user;
 	}
 	
 	public void addMessage(String newMessage){

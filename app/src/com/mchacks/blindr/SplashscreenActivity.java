@@ -35,6 +35,7 @@ ConnectionCallbacks, OnConnectionFailedListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Controller.getInstance().setDimensionAvatar(this);
 		//Remove title bar
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
@@ -97,7 +98,7 @@ ConnectionCallbacks, OnConnectionFailedListener {
 				final String city = address.get(0).getLocality();
 				android.util.Log.i("Blindr", "City name=" + city);
 				Controller.getInstance().setCity(city);
-				Controller.getInstance().setMyOwnUser(new User("Marc-Antoine", AvatarGenerator.generate(this, 50, 50), "vagin"));
+				//Controller.getInstance().setMyOwnUser(new User("Marc-Antoine", AvatarGenerator.generate(this, 50, 50), "vagin"));
 				Intent i = new Intent(SplashscreenActivity.this, ConnectFacebookActivity.class);
 				startActivity(i);
 				finish();
