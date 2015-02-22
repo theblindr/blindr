@@ -7,7 +7,7 @@
     <string name="title_activity_connect_facebook">Connect Facebook</string>
     <string name="app_id">750374798414544</string>
     <string name="want_to_delete">Do you really want to block this person?</string>
-    <string name="want_to_like">Do you really want to like this person?</string>
+    <string name="want_to_like">Do you really want to like %s?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="title_activity_private_chat">Private Chat</string>

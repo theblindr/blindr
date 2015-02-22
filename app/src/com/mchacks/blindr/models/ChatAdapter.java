@@ -200,17 +200,19 @@ public class ChatAdapter extends ArraySwipeAdapter<Message> implements OnClickLi
 			//Delete user from my database
 		} else if(v.getId() == R.id.like_user){
 			//Like user to database
+			final User user = messages.get(0).getUser();
 			CustomYesNoDialog dialog = new CustomYesNoDialog(getContext()){
 
 				@Override
 				public void onPositiveClick() {
 					super.onPositiveClick();
+					Server.like(user);
 				}
 
 			};
 
 			dialog.show();
-			dialog.setDialogText(R.string.want_to_like);
+			dialog.setDialogText(getContext().getString(R.string.want_to_like, user.getName()));
 		}
 	}
 }

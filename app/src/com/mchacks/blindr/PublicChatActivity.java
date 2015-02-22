@@ -79,9 +79,8 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 		listMessages.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
 		listMessages.setStackFromBottom(true);
 
-		ArrayList<User> names = new ArrayList<User>();
-		names.add(Controller.getInstance().getUser("miaow"));
-		matchAdapter = new MatchAdapter(this, names);
+
+		matchAdapter = new MatchAdapter(this, new ArrayList<User>());
 		listPrivate = (ListView) findViewById(R.id.list_private);
 		listPrivate.setAdapter(matchAdapter);
 		listPrivate.setOnItemClickListener(this);
@@ -184,6 +183,10 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 				chatAdapter.addMessage((Message) e);
 				chatAdapter.notifyDataSetChanged();
 				scrollMyListViewToBottom();
+			} else if(e instanceof Match){
+				Controller.getInstance().addMatch((Match) e);
+				matchAdapter.add(((Match) e).getMatchedUser());
+				matchAdapter.notifyDataSetChanged();
 			}
 		}
 
@@ -196,8 +199,12 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 	}
 
 	public void onOldMatchesReceives(List<Match> matches) {
-		// TODO Auto-generated method stub
+		Controller.getInstance().setMatches(matches);
 		
+		for(Match match : Controller.getInstance().getMatches()){
+			matchAdapter.add(match.getMatchedUser());
+		}
+		matchAdapter.notifyDataSetChanged();
 	}
 
 	@Override

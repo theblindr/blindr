@@ -22,7 +22,6 @@ import android.widget.TextView;
 
 import com.mchacks.blindr.controllers.Controller;
 import com.mchacks.blindr.models.ChatAdapter;
-import com.mchacks.blindr.models.City;
 import com.mchacks.blindr.models.Event;
 import com.mchacks.blindr.models.EventsListener;
 import com.mchacks.blindr.models.Match;

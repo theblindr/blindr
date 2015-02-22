@@ -2,6 +2,7 @@ package com.mchacks.blindr.controllers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import android.content.Context;
 import android.util.TypedValue;
@@ -9,6 +10,7 @@ import android.util.TypedValue;
 import com.checkin.avatargenerator.AvatarGenerator;
 import com.facebook.Session;
 import com.mchacks.blindr.models.City;
+import com.mchacks.blindr.models.Match;
 import com.mchacks.blindr.models.User;
 
 public class Controller {
@@ -16,7 +18,7 @@ public class Controller {
 	private HashMap<String, User> users;
 	private Session session;
 	private User myselfUser;
-	private ArrayList<String> privateChats;
+	private ArrayList<Match> matches;
 	private int dimensionAvatar;
 	
 	private static Controller controller;
@@ -24,7 +26,7 @@ public class Controller {
 	private Controller(){
 		city = new City("");
 		users = new HashMap<String, User>();
-		privateChats = new ArrayList<String>();
+		matches = new ArrayList<Match>();
 	}
 	
 	public static Controller getInstance(){
@@ -70,12 +72,17 @@ public class Controller {
 		return myselfUser;
 	}
 	
-	public void setMutualChats(ArrayList<String> mutualChats){
-		this.privateChats = mutualChats;
+	public void setMatches(List<Match> matches){
+		this.matches.clear();
+		this.matches.addAll(matches);
 	}
 	
-	public ArrayList<String> getMutualChats(){
-		return privateChats;
+	public void addMatch(Match match){
+		this.matches.add(match);
+	}
+	
+	public ArrayList<Match> getMatches(){
+		return matches;
 	}
 	
 	private static int dpInPixels(Context context, int dp) {

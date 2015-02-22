@@ -19,7 +19,7 @@ public class Message extends Event{
 	private Gender gender;
 
 	public Message(User user, String message, boolean isIncoming){
-		this(null, null, null, user, message, null, Gender.Custom, isIncoming);
+		this(UUID.randomUUID(), null, null, user, message, null, Gender.Custom, isIncoming);
 	}
 
 	public Message(UUID id, Timestamp timestamp, IDestination destination, User user, String message, String fakeName, Gender gender, boolean isIncoming) {
@@ -53,8 +53,10 @@ public class Message extends Event{
 	public boolean equals(Object o) {
 		if(o instanceof Message){
 			Message other = (Message) o;
-			if(idsMessage.contains(other.getId())){
-				return true;
+			for(UUID id : other.getIdsMessage()){
+				if(idsMessage.contains(id)){
+					return true;
+				}
 			}
 		}
 
