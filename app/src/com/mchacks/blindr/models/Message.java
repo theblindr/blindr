@@ -76,4 +76,8 @@ public class Message extends Event{
 		return gender;
 	}
 
+	public void setIsIncoming(boolean b) {
+		isIncoming = b;
+	}
+
 }

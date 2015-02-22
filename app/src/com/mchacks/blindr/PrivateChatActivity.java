@@ -64,6 +64,7 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 		fbName.setText(remoteUser.getName());
 
 		((ImageView) findViewById(R.id.avatar)).setImageBitmap(remoteUser.getAvatar());
+		findViewById(R.id.avatar).setOnClickListener(this);
 
 		editText = (EditText) findViewById(R.id.editText);
 		editText.clearFocus();
@@ -78,7 +79,7 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 		listMessages.setStackFromBottom(true);
 
 		Server.addEventsListener(this);
-
+		Server.getUserEvents(remoteUser);
 		scheduler = Executors.newSingleThreadScheduledExecutor();
 
 	}
@@ -124,6 +125,8 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 				editText.setText("");
 				scrollMyListViewToTheBottomNowWeHere();
 			}
+		} else if(v.getId() == R.id.avatar){
+			onBackPressed();
 		}
 	}
 
@@ -162,11 +165,12 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 		for(Event e : events){
 			android.util.Log.i("Blindr", "New event=" + e);
 			if(e instanceof Message && e.getDestination() instanceof User){
-				if(((User) e.getDestination()).getId().equals(remoteUser.getId())){
-					chatAdapter.addMessage((Message) e);
-					chatAdapter.notifyDataSetChanged();
-					scrollMyListViewToTheBottomNowWeHere();
+				if((e.getUser()).getId().equals(Controller.getInstance().getMyId())){
+					((Message) e).setIsIncoming(false);
 				}
+				chatAdapter.addMessage((Message) e);
+				chatAdapter.notifyDataSetChanged();
+				scrollMyListViewToTheBottomNowWeHere();
 			}
 		}
 	}

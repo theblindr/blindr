@@ -11,16 +11,16 @@ import android.widget.TextView;
 
 import com.mchacks.blindr.R;
 
-public class MatchAdapter extends ArrayAdapter<User>{
+public class MatchAdapter extends ArrayAdapter<Match>{
 	private Context mContext;
 	private LayoutInflater mInflater = null;
 
-	private ArrayList<User> privates;
+	private ArrayList<Match> matches;
 
-	public MatchAdapter(Context context, ArrayList<User> chatValue) {  
+	public MatchAdapter(Context context, ArrayList<Match> chatValue) {  
 		super(context,R.layout.chat_even, chatValue);
 		mContext = context;     
-		privates = chatValue;     
+		matches = chatValue;     
 	}
 	
 	static class ViewHolder {
@@ -51,9 +51,17 @@ public class MatchAdapter extends ArrayAdapter<User>{
 		}
 		
 		ViewHolder holder = (ViewHolder) rowView.getTag();
+		final Match match = matches.get(position);
 		
-		String name = privates.get(position).getName();
+		String name = match.getMatchedUser().getName();
 		holder.name.setText(name);
+		
+		if(match.isMutual()){
+			holder.mutual.setText("Click here to chat");
+		} else{
+			holder.mutual.setText("Pending request");
+		}
+		
 
 		return rowView;
 	}

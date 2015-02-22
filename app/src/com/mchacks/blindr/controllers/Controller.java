@@ -72,6 +72,10 @@ public class Controller {
 		return myselfUser;
 	}
 	
+	public String getMyId(){
+		return myselfUser.getId().substring(0, myselfUser.getId().indexOf("."));
+	}
+	
 	public void setMatches(List<Match> matches){
 		this.matches.clear();
 		this.matches.addAll(matches);

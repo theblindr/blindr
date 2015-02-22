@@ -19,7 +19,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_centerVertical="true"
-            android:background="@drawable/circle_white"
+            android:background="@drawable/circle_white_sel"
             android:src="@drawable/mail" />
 
         <TextView

@@ -84,6 +84,7 @@ public class PrivateChatAdapter extends ArraySwipeAdapter<Message> implements On
 		}
 
 		if(holder.swipeLayout != null){
+			holder.swipeLayout.setDragDistance(0);
 			holder.swipeLayout.setEnabled(false);
 		}
 

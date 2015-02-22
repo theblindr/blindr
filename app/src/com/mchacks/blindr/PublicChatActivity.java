@@ -79,7 +79,7 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 		listMessages.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
 		listMessages.setStackFromBottom(true);
 
-		matchAdapter = new MatchAdapter(this, new ArrayList<User>());
+		matchAdapter = new MatchAdapter(this, new ArrayList<Match>());
 		listPrivate = (ListView) findViewById(R.id.list_private);
 		listPrivate.setAdapter(matchAdapter);
 		listPrivate.setOnItemClickListener(this);
@@ -183,7 +183,7 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 				scrollMyListViewToBottom();
 			} else if(e instanceof Match){
 				Controller.getInstance().addMatch((Match) e);
-				matchAdapter.add(((Match) e).getMatchedUser());
+				matchAdapter.add(((Match) e));
 				matchAdapter.notifyDataSetChanged();
 			}
 		}
@@ -192,7 +192,7 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View v, int position, long arg3) {
-		PrivateChatActivity.show(this, ((User) adapter.getItemAtPosition(position)).getId());
+		PrivateChatActivity.show(this, ((Match) adapter.getItemAtPosition(position)).getMatchedUser().getId());
 		slidingMenu.toggle(true);
 	}
 
@@ -200,7 +200,7 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 		Controller.getInstance().setMatches(matches);
 		
 		for(Match match : Controller.getInstance().getMatches()){
-			matchAdapter.add(match.getMatchedUser());
+			matchAdapter.add(match);
 		}
 		matchAdapter.notifyDataSetChanged();
 	}
