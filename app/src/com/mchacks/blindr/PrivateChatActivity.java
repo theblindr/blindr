@@ -24,12 +24,13 @@ import com.mchacks.blindr.controllers.Controller;
 import com.mchacks.blindr.models.ChatAdapter;
 import com.mchacks.blindr.models.Event;
 import com.mchacks.blindr.models.EventsListener;
+import com.mchacks.blindr.models.FacebookProfileListener;
 import com.mchacks.blindr.models.Match;
 import com.mchacks.blindr.models.Message;
 import com.mchacks.blindr.models.Server;
 import com.mchacks.blindr.models.User;
 
-public class PrivateChatActivity extends Activity implements OnClickListener, EventsListener {
+public class PrivateChatActivity extends Activity implements OnClickListener, EventsListener, FacebookProfileListener {
 
 	private Typeface tf;
 	private ImageView sendBt;
@@ -158,6 +159,12 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 
 	@Override
 	public void onUserHistoryReceived(List<Event> events) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProfilePicturesReceived(List<String> pictures) {
 		// TODO Auto-generated method stub
 		
 	}
