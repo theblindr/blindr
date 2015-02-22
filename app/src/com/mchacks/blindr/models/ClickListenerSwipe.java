@@ -40,7 +40,7 @@ public class ClickListenerSwipe implements OnClickListener {
 				@Override
 				public void onPositiveClick() {
 					super.onPositiveClick();
-					Server.like(message.getUser());
+					Server.like(message.getUser(), message.getFakeName());
 				}
 
 			};

@@ -168,7 +168,7 @@ public class Server {
 		request.execute(Controller.getInstance().getMyself().getId(), destination.getId(), message);
 	}
 	
-	public static void like(User user) {
+	public static void like(User user, String userFakeName) {
 		AsyncTask<String, Void, String> request = new AsyncTask<String, Void, String>() {
 
 			@Override
@@ -195,7 +195,7 @@ public class Server {
 		};
 		request.execute(Controller.getInstance().getMyself().getId(), user.getId());
 		for(EventsListener listener: eventsListeners) {
-			listener.onUserLiked(user);
+			listener.onUserLiked(user, userFakeName);
 		}
 	}
 	
