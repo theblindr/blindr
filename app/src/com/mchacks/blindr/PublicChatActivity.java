@@ -33,6 +33,7 @@ import com.mchacks.blindr.models.MatchAdapter;
 import com.mchacks.blindr.models.Message;
 import com.mchacks.blindr.models.PublicChatAdapter;
 import com.mchacks.blindr.models.Server;
+import com.mchacks.blindr.models.User;
 
 public class PublicChatActivity extends Activity implements OnClickListener, EventsListener, OnItemClickListener {
 	private Typeface tf;
@@ -214,5 +215,11 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 	@Override
 	public void onUserHistoryReceived(List<Event> events) {
 		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void onUserLiked(User user) {
+		// TODO Auto-generated method stub
+		
 	}
 }

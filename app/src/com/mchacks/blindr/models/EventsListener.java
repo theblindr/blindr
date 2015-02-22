@@ -10,4 +10,6 @@ public interface EventsListener {
 	
 	public void onUserHistoryReceived(List<Event> events);
 	
+	public void onUserLiked(User user);
+	
 }

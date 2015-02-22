@@ -178,4 +178,10 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 			}
 		}
 	}
+
+	@Override
+	public void onUserLiked(User user) {
+		// TODO Auto-generated method stub
+		
+	}
 }

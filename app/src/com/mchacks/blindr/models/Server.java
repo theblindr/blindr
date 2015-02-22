@@ -194,6 +194,9 @@ public class Server {
 			
 		};
 		request.execute(Controller.getInstance().getMyself().getId(), user.getId());
+		for(EventsListener listener: eventsListeners) {
+			listener.onUserLiked(user);
+		}
 	}
 	
 	public static void dislike(User user) {
