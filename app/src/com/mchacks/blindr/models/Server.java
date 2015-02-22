@@ -463,7 +463,7 @@ public class Server {
 		reader.endObject();
 		User user = Controller.getInstance().getUser(userId);
 		if(user != null) {
-			return new Match(null, null, Controller.getInstance().getMyself(), user, mutual, null);
+			return new Match(null, null, Controller.getInstance().getMyself(), user, mutual, null, null);
 		}
 		return null;
 	}

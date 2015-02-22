@@ -2,6 +2,7 @@ package com.mchacks.blindr.models;
 
 import java.util.ArrayList;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.SwipeLayout.Status;
 import com.mchacks.blindr.R;
+import com.mchacks.blindr.models.Message.Gender;
 
 public class PublicChatAdapter extends ArraySwipeAdapter<Message> implements SwipeLayout.SwipeListener{
 	private Context mContext;
@@ -76,7 +78,14 @@ public class PublicChatAdapter extends ArraySwipeAdapter<Message> implements Swi
 		holder.message.setText(message.getMessage());
 
 		if(holder.name != null){
-			holder.name.setText(message.getUser().getName());
+			holder.name.setText(message.getFakeName());
+			if(message.getGender() == Gender.Female){
+				holder.name.setTextColor(mContext.getResources().getColor(R.color.pink));
+			} else if(message.getGender() == Gender.Male){
+				holder.name.setTextColor(mContext.getResources().getColor(R.color.main_color));
+			} else{
+				holder.name.setTextColor(mContext.getResources().getColor(R.color.grey));
+			}
 		}
 
 		if(holder.avatar != null){
@@ -93,8 +102,8 @@ public class PublicChatAdapter extends ArraySwipeAdapter<Message> implements Swi
 
 			holder.swipeLayout.addSwipeListener(this);
 
-			rowView.findViewById(R.id.delete_user).setOnClickListener(new ClickListenerSwipe(mContext, message.getUser()));
-			rowView.findViewById(R.id.like_user).setOnClickListener(new ClickListenerSwipe(mContext, message.getUser()));
+			rowView.findViewById(R.id.delete_user).setOnClickListener(new ClickListenerSwipe((Activity) getContext(), message));
+			rowView.findViewById(R.id.like_user).setOnClickListener(new ClickListenerSwipe((Activity) mContext, message));
 		}
 
 		return rowView;

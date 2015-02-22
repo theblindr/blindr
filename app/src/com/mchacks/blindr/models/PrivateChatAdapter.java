@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mchacks.blindr.R;
+import com.mchacks.blindr.models.Message.Gender;
 
 public class PrivateChatAdapter extends ArrayAdapter<Message> {
 	private Context mContext;
@@ -68,7 +69,14 @@ public class PrivateChatAdapter extends ArrayAdapter<Message> {
 		holder.message.setText(message.getMessage());
 
 		if(holder.name != null){
-			holder.name.setText(message.getUser().getName());
+			holder.name.setText(message.getRealName());
+			if(message.getGender() == Gender.Female){
+				holder.name.setTextColor(mContext.getResources().getColor(R.color.pink));
+			} else if(message.getGender() == Gender.Male){
+				holder.name.setTextColor(mContext.getResources().getColor(R.color.main_color));
+			} else{
+				holder.name.setTextColor(mContext.getResources().getColor(R.color.grey));
+			}
 		}
 
 		if(holder.avatar != null){

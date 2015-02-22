@@ -8,14 +8,16 @@ import com.mchacks.blindr.controllers.Controller;
 public class Match extends Event{
 
 	private Boolean isMutual;
+	private String fakeName;
 	
 	public Match(UUID id, Timestamp timestamp, IDestination destination, User user) {
-		this(id, timestamp, destination, user, false, null);
+		this(id, timestamp, destination, user, false, null, null);
 	}
 		
-	public Match(UUID id, Timestamp timestamp, IDestination destination, User user, Boolean isMutual, String realName) {
+	public Match(UUID id, Timestamp timestamp, IDestination destination, User user, Boolean isMutual, String realName, String fakeName) {
 		super(id, timestamp, destination, user, realName);
 		this.isMutual = isMutual;
+		this.fakeName = fakeName;
 	}
 	
 	public User[] getMatchUsers() {
@@ -32,6 +34,10 @@ public class Match extends Event{
 	
 	public Boolean isMutual() {
 		return isMutual;
+	}
+	
+	public String getFakeName(){
+		return fakeName;
 	}
 	
 }

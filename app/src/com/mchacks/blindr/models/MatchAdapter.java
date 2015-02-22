@@ -56,14 +56,11 @@ public class MatchAdapter extends ArrayAdapter<Match>{
 		ViewHolder holder = (ViewHolder) rowView.getTag();
 		final Match match = matches.get(position);
 		
-		String name = match.getMatchedUser().getName();
-		
 		if(match.isMutual()){
 			holder.name.setText(match.getRealName());
 		} else{
-			holder.name.setText(name);
+			holder.name.setText(match.getFakeName());
 		}
-		
 		holder.avatar.setImageBitmap(match.getMatchedUser().getAvatar());
 		
 		if(match.isMutual()){
