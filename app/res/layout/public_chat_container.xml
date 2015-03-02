@@ -8,6 +8,6 @@
     sliding:fadeDegree="0.5"
     sliding:fadeEnabled="true"
     sliding:selectorEnabled="false"
-    sliding:touchModeAbove="none"
+    sliding:touchModeAbove="margin"
     sliding:viewAbove="@layout/public_chat"
     sliding:viewBehind="@layout/private_chat_list" />

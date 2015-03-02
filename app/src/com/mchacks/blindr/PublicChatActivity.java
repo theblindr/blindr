@@ -25,6 +25,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu.OnOpenListener;
 import com.mchacks.blindr.controllers.Controller;
 import com.mchacks.blindr.models.City;
 import com.mchacks.blindr.models.Event;
@@ -36,7 +37,7 @@ import com.mchacks.blindr.models.PublicChatAdapter;
 import com.mchacks.blindr.models.Server;
 import com.mchacks.blindr.models.User;
 
-public class PublicChatActivity extends Activity implements OnClickListener, EventsListener, OnItemClickListener {
+public class PublicChatActivity extends Activity implements OnClickListener, EventsListener, OnItemClickListener, OnOpenListener {
 	private Typeface tf;
 	private ImageView sendBt;
 	private PublicChatAdapter chatAdapter;
@@ -67,6 +68,7 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 		editText.clearFocus();
 
 		slidingMenu = (SlidingMenu) findViewById(R.id.slidingmenulayout);
+		slidingMenu.setOnOpenListener(this);
 
 		sendBt = (ImageView) findViewById(R.id.send);
 		sendBt.setOnClickListener(this);
@@ -176,6 +178,7 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 
 	@Override
 	public void onEventsReceived(List<Event> events) {
+		boolean alreadyCalledNewMatches = false;
 		for(Event e : events){
 			if(e instanceof Message && e.getDestination() instanceof City){
 				if(!Controller.getInstance().getBlockedPeople(this).contains(((Message) e).getUser().getId())){
@@ -184,13 +187,9 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 					scrollMyListViewToBottom();
 				}
 			} else if(e instanceof Match){
-				if(!Controller.getInstance().containsMatch((Match) e)){
-					if(Controller.getInstance().checkIfPendingMatch((Match) e)){
-						matchAdapter.remove((Match) e);
-					}
-					Controller.getInstance().addMatch((Match) e);
-					matchAdapter.add(((Match) e));
-					matchAdapter.notifyDataSetChanged();
+				if(!alreadyCalledNewMatches){
+					Server.getMatches();
+					alreadyCalledNewMatches = true;
 				}
 			}
 		}
@@ -204,11 +203,12 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 			PrivateChatActivity.show(this, m.getMatchedUser().getId(), m.getRealName());
 			slidingMenu.toggle(true);
 		}
-		
+
 	}
 
 	public void onOldMatchesReceives(List<Match> matches) {
 		Controller.getInstance().setMatches(matches);
+		matchAdapter.clear();
 
 		for(Match match : Controller.getInstance().getMatches()){
 			matchAdapter.add(match);
@@ -226,5 +226,10 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 		Match match = new Match(UUID.randomUUID(), null, user, Controller.getInstance().getMyself(), false, null, userFakeName);
 		matchAdapter.add(match);
 		matchAdapter.notifyDataSetChanged();
+	}
+
+	@Override
+	public void onOpen() {
+		hideKeyboard();
 	}
 }

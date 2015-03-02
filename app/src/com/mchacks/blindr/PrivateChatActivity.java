@@ -149,7 +149,7 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 		for(Event e : events){
 			android.util.Log.i("Blindr", "New event=" + e);
 			if(e instanceof Message && e.getDestination() instanceof User){
-				if(((User) e.getDestination()).getId().equals(remoteUser.getId())){
+				if(((User) e.getDestination()).getId().equals(Controller.getInstance().getMyId())){
 					chatAdapter.addMessage((Message) e);
 					chatAdapter.notifyDataSetChanged();
 					scrollMyListViewToTheBottomNowWeHere();

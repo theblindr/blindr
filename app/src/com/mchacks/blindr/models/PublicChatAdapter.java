@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.SwipeLayout.Status;
 import com.mchacks.blindr.R;
+import com.mchacks.blindr.controllers.Controller;
 import com.mchacks.blindr.models.Message.Gender;
 
 public class PublicChatAdapter extends ArraySwipeAdapter<Message> implements SwipeLayout.SwipeListener{
@@ -78,7 +79,11 @@ public class PublicChatAdapter extends ArraySwipeAdapter<Message> implements Swi
 		holder.message.setText(message.getMessage());
 
 		if(holder.name != null){
-			holder.name.setText(message.getFakeName());
+			if(Controller.getInstance().checkIfMutualWith(message.getFakeName())){
+				holder.name.setText(message.getRealName());	
+			} else{
+				holder.name.setText(message.getFakeName());
+			}
 			if(message.getGender() == Gender.Female){
 				holder.name.setTextColor(mContext.getResources().getColor(R.color.pink));
 			} else if(message.getGender() == Gender.Male){
