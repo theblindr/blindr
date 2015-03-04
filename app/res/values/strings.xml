@@ -8,9 +8,13 @@
     <string name="app_id">750374798414544</string>
     <string name="want_to_delete">Do you really want to block %s?</string>
     <string name="want_to_like">Do you really want to like %s?</string>
+    <string name="location_not_found">Your location has not been found.\nPlease try again.</string>
+    <string name="no_network">No network is available.\nPlease try again later.</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="ok">Ok</string>
     <string name="title_activity_private_chat">Private Chat</string>
     <string name="title_activity_slideshow">SlideshowActivity</string>
+    <string name="authenticating">Authenticating...</string>
 
 </resources>

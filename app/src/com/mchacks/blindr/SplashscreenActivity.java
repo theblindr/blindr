@@ -25,6 +25,7 @@ import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListe
 import com.google.android.gms.location.LocationServices;
 import com.mchacks.blindr.controllers.Controller;
 import com.mchacks.blindr.models.City;
+import com.mchacks.blindr.views.CustomYesNoDialog;
 
 public class SplashscreenActivity extends Activity implements
 ConnectionCallbacks, OnConnectionFailedListener {
@@ -46,19 +47,32 @@ ConnectionCallbacks, OnConnectionFailedListener {
 		tv.setTypeface(tf);
 
 		if(!isNetworkAvailable()){
-			finish();
+			CustomYesNoDialog dialog = new CustomYesNoDialog(this){
+
+				@Override
+				public void onPositiveClick() {
+					super.onPositiveClick();
+					finish();
+				}
+
+			};
+
+			dialog.show();
+			dialog.transformAsOkDialog();
+			dialog.setDialogText(getString(R.string.no_network));
+		} else{
+
+			new Handler(getMainLooper()).postDelayed(new Runnable(){
+
+				@Override
+				public void run() {
+					buildGoogleApiClient();
+
+					mGoogleApiClient.connect();
+				}
+
+			}, 300);
 		}
-
-		new Handler(getMainLooper()).postDelayed(new Runnable(){
-
-			@Override
-			public void run() {
-				buildGoogleApiClient();
-
-				mGoogleApiClient.connect();
-			}
-
-		}, 300);
 	}
 
 	public void onDestroy(){
@@ -102,6 +116,19 @@ ConnectionCallbacks, OnConnectionFailedListener {
 				finish();
 			} catch (IOException e) {
 				e.printStackTrace();
+				CustomYesNoDialog dialog = new CustomYesNoDialog(this){
+
+					@Override
+					public void onPositiveClick() {
+						super.onPositiveClick();
+						finish();
+					}
+
+				};
+
+				dialog.show();
+				dialog.transformAsOkDialog();
+				dialog.setDialogText(getString(R.string.location_not_found));
 			}
 			catch (NullPointerException e) {
 				e.printStackTrace();

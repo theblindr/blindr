@@ -1,6 +1,8 @@
 package com.mchacks.blindr;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -167,6 +169,7 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 	@Override
 	public void onUserHistoryReceived(List<Event> events) {
 		chatAdapter.clear();
+		Collections.sort(events, dateComparator);
 		for(Event e : events){
 			if(e instanceof Message && e.getDestination() instanceof User){
 				if((e.getUser()).getId().equals(Controller.getInstance().getMyId())){
@@ -184,4 +187,20 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 		// TODO Auto-generated method stub
 		
 	}
+	
+	Comparator<Event> dateComparator = new Comparator<Event>()
+			{
+			    @Override
+			    public int compare(Event lhs, Event rhs)
+			    {
+			        try
+			        {
+			            return lhs.getTimestamp().compareTo(rhs.getTimestamp());
+			        }
+			        catch (Exception e)
+			        {
+			            return 0;
+			        }
+			    }
+			};
 }

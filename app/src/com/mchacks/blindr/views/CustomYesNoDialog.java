@@ -49,6 +49,11 @@ android.view.View.OnClickListener {
 			((TextView) findViewById(R.id.txt_dia)).setText(resourceId);
 		}
 	}
+	
+	public void transformAsOkDialog(){
+		((TextView) findViewById(R.id.btn_yes)).setText(getContext().getString(R.string.ok));
+		findViewById(R.id.btn_no).setVisibility(View.GONE);
+	}
 
 	public void onPositiveClick(){}
 	public void onNegativeClick(){}

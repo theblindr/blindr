@@ -1,18 +1,29 @@
 package com.mchacks.blindr;
 
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap.Config;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnTouchListener;
+import android.view.Window;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.ViewFlipper;
@@ -21,10 +32,7 @@ import com.mchacks.blindr.controllers.Controller;
 import com.mchacks.blindr.models.FacebookProfileListener;
 import com.mchacks.blindr.models.Server;
 import com.mchacks.blindr.models.User;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.todddavies.components.progressbar.ProgressWheel;
 
 public class SlideshowActivity extends Activity implements FacebookProfileListener{
 
@@ -33,6 +41,8 @@ public class SlideshowActivity extends Activity implements FacebookProfileListen
 	private ViewFlipper mViewFlipper;	
 	private Context mContext;
 	private User remoteUser;
+	private ArrayList<Bitmap> bitmaps;
+	private List<String> pictures;
 
 	private final GestureDetector detector = new GestureDetector(new SwipeGestureDetector());
 
@@ -58,12 +68,27 @@ public class SlideshowActivity extends Activity implements FacebookProfileListen
 				return true;
 			}
 		});
+		
+		((ProgressWheel) findViewById(R.id.progressBar)).spin();
 
-		// Create global configuration and initialize ImageLoader with this config
-		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this).build();
-		ImageLoader.getInstance().init(config);
+		bitmaps = new ArrayList<Bitmap>();
 		Server.addProfileListener(this);
 		Server.getUserFacebookInfos(remoteUser);
+	}
+	
+	@Override
+	public void onBackPressed(){
+		super.onBackPressed();
+		finish();
+	}
+	
+	@Override
+	public void onDestroy(){
+		super.onDestroy();
+		for(Bitmap iv : bitmaps){
+			Log.i("SlideshowActivity", "Recycling bitmap");
+			iv.recycle();
+		}
 	}
 
 	class SwipeGestureDetector extends SimpleOnGestureListener {
@@ -93,14 +118,82 @@ public class SlideshowActivity extends Activity implements FacebookProfileListen
 
 	@Override
 	public void onProfilePicturesReceived(List<String> pictures) {
-		DisplayImageOptions dip = new DisplayImageOptions.Builder().resetViewBeforeLoading().bitmapConfig(Config.RGB_565).imageScaleType(ImageScaleType.IN_SAMPLE_INT).build();
+		this.pictures = pictures;
 		for(String pic : pictures){
-			ImageView imageView = new ImageView(this);
-			mViewFlipper.addView(imageView);
-			ImageLoader.getInstance().displayImage(pic, imageView, dip);
+			new ImageDownloader().execute(pic);
 		}
-		findViewById(R.id.progressBar).setVisibility(View.GONE);
-		findViewById(R.id.swipe_left).setVisibility(View.VISIBLE);
-		findViewById(R.id.swipe_right).setVisibility(View.VISIBLE);
 	}
+	
+	private class ImageDownloader extends AsyncTask<String,Void,Bitmap> {
+
+		@Override
+		protected Bitmap doInBackground(String... param) {
+			// TODO Auto-generated method stub
+			return downloadBitmap(param[0]);
+		}
+
+		@Override
+		protected void onPostExecute(Bitmap result) {
+			Log.i("Async-Example", "onPostExecute Called");
+			bitmaps.add(result);
+			ImageView imageView = new ImageView(SlideshowActivity.this);
+			imageView.setImageBitmap(result);
+			mViewFlipper.addView(imageView);
+			if(bitmaps.size() == 2){
+				findViewById(R.id.swipe_left).setVisibility(View.VISIBLE);
+				findViewById(R.id.swipe_right).setVisibility(View.VISIBLE);
+			} else if(bitmaps.size() == pictures.size()){
+				findViewById(R.id.progressBar).setVisibility(View.GONE);
+			}
+		}
+
+		private Bitmap downloadBitmap(String url) {
+			// initilize the default HTTP client object
+			final DefaultHttpClient client = new DefaultHttpClient();
+
+			//forming a HttoGet request 
+			final HttpGet getRequest = new HttpGet(url);
+			try {
+
+				HttpResponse response = client.execute(getRequest);
+
+				//check 200 OK for success
+				final int statusCode = response.getStatusLine().getStatusCode();
+
+				if (statusCode != HttpStatus.SC_OK) {
+					Log.w("ImageDownloader", "Error " + statusCode + 
+							" while retrieving bitmap from " + url);
+					return null;
+
+				}
+
+				final HttpEntity entity = response.getEntity();
+				if (entity != null) {
+					InputStream inputStream = null;
+					try {
+						// getting contents from the stream 
+						inputStream = entity.getContent();
+
+						// decoding stream data back into image Bitmap that android understands
+						final Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+
+						return bitmap;
+					} finally {
+						if (inputStream != null) {
+							inputStream.close();
+						}
+						entity.consumeContent();
+					}
+				}
+			} catch (Exception e) {
+				// You Could provide a more explicit error message for IOException
+				getRequest.abort();
+				Log.e("ImageDownloader", "Something went wrong while" +
+						" retrieving bitmap from " + url + e.toString());
+			} 
+
+			return null;
+		}
+	}
+	
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ProgressWheel="http://schemas.android.com/apk/res/com.mchacks.blindr"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@color/black"
@@ -29,11 +30,15 @@
         android:src="@drawable/swipe_right"
         android:visibility="gone" />
 
-    <ProgressBar
+    <com.todddavies.components.progressbar.ProgressWheel
         android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true" />
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_centerInParent="true"
+        ProgressWheel:barColor="@color/main_color"
+        ProgressWheel:barLength="40dp"
+        ProgressWheel:barWidth="3dp"
+        ProgressWheel:rimColor="@color/white"
+        ProgressWheel:rimWidth="3dp" />
 
 </RelativeLayout>
