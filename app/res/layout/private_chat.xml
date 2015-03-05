@@ -32,7 +32,7 @@
             android:text="@string/hello_world"
             android:textColor="@color/white"
             android:textSize="18sp" />
-        
+
         <ImageView
             android:id="@+id/photos"
             android:layout_width="40dp"
@@ -63,8 +63,10 @@
         android:divider="@null"
         android:dividerHeight="10dp"
         android:listSelector="@android:color/transparent"
+        android:overScrollMode="never"
         android:paddingBottom="10dp"
-        android:paddingTop="10dp" />
+        android:paddingTop="10dp"
+        android:scrollbars="none" />
 
     <RelativeLayout
         android:id="@+id/bottomBar"

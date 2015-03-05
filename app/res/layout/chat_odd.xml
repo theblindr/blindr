@@ -5,11 +5,13 @@
 
     <RelativeLayout
         android:id="@+id/chat_holder"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/odd"
-        android:layout_marginLeft="20dp"
-        android:paddingLeft="10dp" >
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="58dp"
+        android:background="@drawable/chat_outgoing"
+        android:paddingLeft="10dp"
+        android:paddingRight="15dp" >
 
         <TextView
             android:id="@+id/message"

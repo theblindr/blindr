@@ -8,7 +8,7 @@
     <LinearLayout
         android:id="@+id/bottom_wrapper"
         android:layout_width="110dp"
-        android:layout_height="50dp"
+        android:layout_height="match_parent"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingBottom="3dp"
@@ -30,7 +30,7 @@
             android:layout_weight="1"
             android:background="@drawable/green_bg_sel"
             android:clickable="true"
-            android:src="@drawable/heart" />
+            android:src="@drawable/mail" />
 
         <!-- What you want to show -->
     </LinearLayout>
@@ -43,20 +43,25 @@
             android:id="@+id/avatar"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:background="@drawable/avatar_bg"
             android:src="@drawable/send" />
 
         <RelativeLayout
             android:id="@+id/chat_holder"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
             android:layout_toRightOf="@id/avatar"
-            android:background="@drawable/even"
-            android:paddingLeft="15dp" >
+            android:background="@drawable/chat_incoming"
+            android:minWidth="130dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="10dp" >
 
             <TextView
                 android:id="@+id/name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingRight="15dp"
                 android:text="@string/hello_world"
                 android:textColor="@color/darker_grey"
                 android:textSize="12sp" />

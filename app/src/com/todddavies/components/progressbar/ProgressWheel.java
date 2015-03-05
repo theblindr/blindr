@@ -1,6 +1,6 @@
 package com.todddavies.components.progressbar;
 
-import com.mchacks.blindr.R;
+import com.lesgens.blindr.R;
 
 import android.content.Context;
 import android.content.res.TypedArray;

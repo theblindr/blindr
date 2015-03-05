@@ -4,6 +4,7 @@
     <color name="dark_main_color">#0079CA</color>
     <color name="white">#FFFFFF</color>
     <color name="grey">#c2c2c2</color>
+    <color name="faded_black">#26000000</color>
     <color name="darker_grey">#a2a2a2</color>
     <color name="black">#000000</color>
     <color name="pale_green">#8000E600</color>
