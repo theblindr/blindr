@@ -42,7 +42,7 @@ public class MatchAdapter extends ArrayAdapter<Match>{
 		View rowView;
 
 		if(convertView == null){ // Only inflating if necessary is great for performance
-			rowView = getInflater().inflate(R.layout.private_item, parent, false);
+			rowView = getInflater().inflate(R.layout.match_item, parent, false);
 			
 			ViewHolder holder = new ViewHolder();
 			holder.name = (TextView) rowView.findViewById(R.id.name);

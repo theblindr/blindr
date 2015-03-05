@@ -1,5 +1,6 @@
 package com.lesgens.blindr.models;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -22,6 +23,7 @@ public class PublicChatAdapter extends ArraySwipeAdapter<Message> implements Swi
 
 	private ArrayList<Message> messages;
 	private ArrayList<SwipeLayout> swipeLayouts;
+	private SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 
 	public PublicChatAdapter(Context context, ArrayList<Message> chatValue) {  
 		super(context,-1, chatValue);
@@ -34,6 +36,7 @@ public class PublicChatAdapter extends ArraySwipeAdapter<Message> implements Swi
 		public TextView name;
 		public ImageView avatar;
 		public TextView message;
+		public TextView time;
 		public SwipeLayout swipeLayout;
 	}
 
@@ -59,6 +62,7 @@ public class PublicChatAdapter extends ArraySwipeAdapter<Message> implements Swi
 			viewHolder.avatar = null;
 			viewHolder.swipeLayout = null;
 			viewHolder.message = (TextView) rowView.findViewById(R.id.message);
+			viewHolder.time = (TextView) rowView.findViewById(R.id.time);
 			rowView.setTag(viewHolder);
 		} else{
 			rowView = getInflater().inflate(R.layout.chat_even, parent, false);
@@ -67,6 +71,7 @@ public class PublicChatAdapter extends ArraySwipeAdapter<Message> implements Swi
 			viewHolder.name = (TextView) rowView.findViewById(R.id.name);
 			viewHolder.avatar = (ImageView) rowView.findViewById(R.id.avatar);
 			viewHolder.message = (TextView) rowView.findViewById(R.id.message);
+			viewHolder.time = (TextView) rowView.findViewById(R.id.time);
 			viewHolder.swipeLayout =  (SwipeLayout) rowView.findViewById(R.id.swipe_layout);
 
 			rowView.setTag(viewHolder);
@@ -77,6 +82,7 @@ public class PublicChatAdapter extends ArraySwipeAdapter<Message> implements Swi
 		ViewHolder holder = (ViewHolder) rowView.getTag();
 
 		holder.message.setText(message.getMessage());
+		holder.time.setText(sdf.format(message.getTimestamp()));
 
 		if(holder.name != null){
 			if(Controller.getInstance().checkIfMutualWith(message.getFakeName())){

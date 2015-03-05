@@ -10,4 +10,4 @@
     sliding:selectorEnabled="false"
     sliding:touchModeAbove="margin"
     sliding:viewAbove="@layout/public_chat"
-    sliding:viewBehind="@layout/private_chat_list" />
+    sliding:viewBehind="@layout/matches" />

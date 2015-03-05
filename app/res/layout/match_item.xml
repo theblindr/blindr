@@ -31,7 +31,7 @@
         android:layout_marginLeft="80dp"
         android:layout_marginTop="5dp"
         android:text="@string/hello_world"
-        android:textColor="#e2e2e2"
+        android:textColor="@color/gray"
         android:textSize="12sp" />
 
 </RelativeLayout>

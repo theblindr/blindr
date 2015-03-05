@@ -12,4 +12,6 @@
     <color name="pale_red">#80DD0000</color>
     <color name="darker_red">#CCDD0000</color>
     <color name="pink">#FFCCFF</color>
+    <color name="gray">#e2e2e2</color>
+    <color name="transparent">#00000000</color>
 </resources>

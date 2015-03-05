@@ -9,6 +9,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -30,14 +31,13 @@ import com.lesgens.blindr.models.Message;
 import com.lesgens.blindr.models.PrivateChatAdapter;
 import com.lesgens.blindr.models.Server;
 import com.lesgens.blindr.models.User;
-import com.lesgens.blindr.R;
 
 public class PrivateChatActivity extends Activity implements OnClickListener, EventsListener {
 
 	private Typeface tf;
 	private ImageView sendBt;
 	private PrivateChatAdapter chatAdapter;
-	private ListView listMessages;
+	private StickyListHeadersListView listMessages;
 	private EditText editText;
 	private ScheduledExecutorService scheduler;
 	private Future<?> future;
@@ -78,10 +78,9 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 		sendBt.setOnClickListener(this);
 
 		chatAdapter = new PrivateChatAdapter(this, new ArrayList<Message>());
-		listMessages = (ListView) findViewById(R.id.list);
+		listMessages = (StickyListHeadersListView) findViewById(R.id.list);
 		listMessages.setAdapter(chatAdapter);
 		listMessages.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
-		listMessages.setStackFromBottom(true);
 
 		Server.addEventsListener(this);
 		scheduler = Executors.newSingleThreadScheduledExecutor();
