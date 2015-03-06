@@ -8,6 +8,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
@@ -42,7 +43,7 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 	private Typeface tf;
 	private ImageView sendBt;
 	private PublicChatAdapter chatAdapter;
-	private ListView listMessages;
+	private StickyListHeadersListView listMessages;
 	private EditText editText;
 	private ImageView menuPrivate;
 	private SlidingMenu slidingMenu;
@@ -78,10 +79,9 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 		menuPrivate.setOnClickListener(this);
 
 		chatAdapter = new PublicChatAdapter(this, new ArrayList<Message>());
-		listMessages = (ListView) findViewById(R.id.list);
+		listMessages = (StickyListHeadersListView) findViewById(R.id.list);
 		listMessages.setAdapter(chatAdapter);
 		listMessages.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
-		listMessages.setStackFromBottom(true);
 
 		matchAdapter = new MatchAdapter(this, new ArrayList<Match>());
 		listPrivate = (ListView) findViewById(R.id.list_private);

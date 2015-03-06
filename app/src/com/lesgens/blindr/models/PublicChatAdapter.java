@@ -1,10 +1,15 @@
 package com.lesgens.blindr.models;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
+import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,23 +18,37 @@ import android.widget.TextView;
 
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.SwipeLayout.Status;
+import com.lesgens.blindr.R;
 import com.lesgens.blindr.controllers.Controller;
 import com.lesgens.blindr.models.Message.Gender;
-import com.lesgens.blindr.R;
+import com.lesgens.blindr.models.PrivateChatAdapter.HeaderViewHolder;
 
-public class PublicChatAdapter extends ArraySwipeAdapter<Message> implements SwipeLayout.SwipeListener{
+public class PublicChatAdapter extends ArraySwipeAdapter<Message> implements SwipeLayout.SwipeListener, StickyListHeadersAdapter{
 	private Context mContext;
 	private LayoutInflater mInflater = null;
 
 	private ArrayList<Message> messages;
 	private ArrayList<SwipeLayout> swipeLayouts;
-	private SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+	private SimpleDateFormat sdfMessage = new SimpleDateFormat("HH:mm");
+	private SimpleDateFormat sdfDaySameWeek = new SimpleDateFormat("EEEE");
+	private SimpleDateFormat sdfDaySameYear = new SimpleDateFormat("dd MMM");
+	private SimpleDateFormat sdfDayAnotherYear = new SimpleDateFormat("dd MMM yyyy");
+	private static SimpleDateFormat sdfDateForDays = new SimpleDateFormat("dd.MM.yyyy");
+	private Date sameWeek;
+	private Calendar sameYear;
+	private Typeface tf;
 
 	public PublicChatAdapter(Context context, ArrayList<Message> chatValue) {  
 		super(context,-1, chatValue);
 		mContext = context;     
 		messages = chatValue;     
 		swipeLayouts = new ArrayList<SwipeLayout>();
+		sameYear = Calendar.getInstance();
+		sameYear.add(Calendar.DAY_OF_MONTH, -7);
+		sameWeek = sameYear.getTime();
+		sameYear.add(Calendar.DAY_OF_MONTH, +7);
+		sameYear.set(Calendar.DAY_OF_YEAR, 0);
+		tf = Typeface.createFromAsset(context.getAssets(), "fonts/Raleway_Thin.otf");
 	}
 
 	static class ViewHolder {
@@ -82,7 +101,7 @@ public class PublicChatAdapter extends ArraySwipeAdapter<Message> implements Swi
 		ViewHolder holder = (ViewHolder) rowView.getTag();
 
 		holder.message.setText(message.getMessage());
-		holder.time.setText(sdf.format(message.getTimestamp()));
+		holder.time.setText(sdfMessage.format(message.getTimestamp()));
 
 		if(holder.name != null){
 			if(Controller.getInstance().checkIfMutualWith(message.getFakeName())){
@@ -137,12 +156,12 @@ public class PublicChatAdapter extends ArraySwipeAdapter<Message> implements Swi
 	public void addMessage(Message message){
 		if(!messages.isEmpty()){
 			if(!messages.contains(message)){
-				final Message lastMessage = messages.get(messages.size()-1);
-				if(lastMessage.getUser().getId().equals(message.getUser().getId())){
-					lastMessage.addMessage(message.getMessage(), message.getId());
-				} else{
+//				final Message lastMessage = messages.get(messages.size()-1);
+//				if(lastMessage.getUser().getId().equals(message.getUser().getId())){
+//					lastMessage.addMessage(message.getMessage(), message.getId());
+//				} else{
 					super.add(message);
-				}
+//				}
 			}
 		} else{
 			super.add(message);
@@ -200,5 +219,55 @@ public class PublicChatAdapter extends ArraySwipeAdapter<Message> implements Swi
 	public void onUpdate(SwipeLayout arg0, int arg1, int arg2) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public View getHeaderView(int position, View convertView, ViewGroup parent) {
+		HeaderViewHolder holder;
+		if (convertView == null) {
+			holder = new HeaderViewHolder();
+			convertView = getInflater().inflate(R.layout.header, parent, false);
+			holder.day = (TextView) convertView.findViewById(R.id.day);
+			convertView.setTag(holder);
+		} else {
+			holder = (HeaderViewHolder) convertView.getTag();
+		}
+		//set header text as first char in name
+		Timestamp time = messages.get(position).getTimestamp();
+		String headerText = getHeaderText(time);
+
+		holder.day.setTypeface(tf);
+		holder.day.setText(headerText);
+
+		return convertView;
+	}
+
+	public String getHeaderText(Timestamp time){
+		if(sameWeek.before(time)){
+			return sdfDaySameWeek.format(time);
+		} else if(sameYear.before(time)){
+			return sdfDaySameYear.format(time);
+		} else{
+			return sdfDayAnotherYear.format(time);
+		}
+	}
+
+	@Override
+	public long getHeaderId(int position) {
+		return getDayCount(sdfDateForDays.format(messages.get(position).getTimestamp().getTime()), sdfDateForDays.format(sameYear.getTime()));
+	}
+
+	private long getDayCount(String start, String end) {
+		long diff = -1;
+		try {
+			Date dateStart = sdfDateForDays.parse(start);
+			Date dateEnd = sdfDateForDays.parse(end);
+
+			//time is always 00:00:00 so rounding should help to ignore the missing hour when going from winter to summer time as well as the extra hour in the other direction
+			diff = Math.round((dateEnd.getTime() - dateStart.getTime()) / (double) 86400000);
+		} catch (Exception e) {
+			//handle the exception according to your own situation
+		}
+		return diff;
 	}
 }

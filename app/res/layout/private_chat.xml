@@ -67,7 +67,8 @@
         android:listSelector="@android:color/transparent"
         android:overScrollMode="never"
         android:paddingBottom="10dp"
-        android:scrollbars="none" />
+        android:scrollbars="none"
+        android:stackFromBottom="true" />
 
     <RelativeLayout
         android:id="@+id/bottomBar"

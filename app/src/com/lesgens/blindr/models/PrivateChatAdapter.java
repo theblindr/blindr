@@ -143,7 +143,7 @@ public class PrivateChatAdapter extends ArrayAdapter<Message> implements StickyL
 		return getDayCount(sdfDateForDays.format(messages.get(position).getTimestamp().getTime()), sdfDateForDays.format(sameYear.getTime()));
 	}
 
-	public static long getDayCount(String start, String end) {
+	private long getDayCount(String start, String end) {
 		long diff = -1;
 		try {
 			Date dateStart = sdfDateForDays.parse(start);
