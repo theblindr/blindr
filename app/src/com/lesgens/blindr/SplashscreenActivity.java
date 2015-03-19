@@ -15,9 +15,15 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
 
+import com.facebook.Session;
+import com.facebook.SessionState;
+import com.facebook.UiLifecycleHelper;
+import com.facebook.widget.LoginButton;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -25,13 +31,46 @@ import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListe
 import com.google.android.gms.location.LocationServices;
 import com.lesgens.blindr.controllers.Controller;
 import com.lesgens.blindr.models.City;
+import com.lesgens.blindr.models.Server;
+import com.lesgens.blindr.models.UserAuthenticatedListener;
 import com.lesgens.blindr.views.CustomYesNoDialog;
-import com.lesgens.blindr.R;
+import com.todddavies.components.progressbar.ProgressWheel;
 
 public class SplashscreenActivity extends Activity implements
-ConnectionCallbacks, OnConnectionFailedListener {
+ConnectionCallbacks, OnConnectionFailedListener, UserAuthenticatedListener {
 	private GoogleApiClient mGoogleApiClient;
 	private Location mLastLocation;
+	private static final String[] PERMISSIONS = {"public_profile", "user_photos"};
+	private boolean connected = false;
+	private boolean authenticated = false;
+	private boolean geolocated = false;
+
+	private UiLifecycleHelper uiHelper;
+
+	private Session.StatusCallback callback = new Session.StatusCallback() {
+		public void call(Session session, SessionState state, Exception exception) {
+			onSessionStateChange(session, state, exception);
+		}
+	}; 
+
+	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
+		Log.i("SplashscreenActivity", "onSessionStateChange");
+		Controller.getInstance().setSession(session);
+		if(state.isOpened() && !connected){
+			connected = true;
+			session.refreshPermissions();
+			List<String> permissions = session.getPermissions();
+			Log.i("FACEBOOK_CONNECTION", "Logged in..." + permissions.toString());
+			findViewById(R.id.authButton).setVisibility(View.GONE);
+			findViewById(R.id.splash_text).setVisibility(View.GONE);
+			findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+			((ProgressWheel) findViewById(R.id.progressBar)).spin();
+			Server.connect(session.getAccessToken());
+		} else if(state.isClosed()) {
+			connected = false;
+			Log.i("FACEBOOK_CONNECTION", "Logged out...");
+		}
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -74,15 +113,65 @@ ConnectionCallbacks, OnConnectionFailedListener {
 
 			}, 300);
 		}
+		
+		Server.addUserAuthenticatedListener(this);
+		LoginButton authButton = (LoginButton)findViewById(R.id.authButton);
+		authButton.setReadPermissions(PERMISSIONS);
+		uiHelper = new UiLifecycleHelper(this, callback);
+		uiHelper.onCreate(savedInstanceState);
 	}
 
 	public void onDestroy(){
 		super.onDestroy();
-
+		uiHelper.onDestroy();
+		
 		if(mGoogleApiClient != null){
 			if(mGoogleApiClient.isConnected() || mGoogleApiClient.isConnecting()){
 				mGoogleApiClient.disconnect();
 			}
+		}
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		Log.i("SplashscreenActivity", "onActivityResult");
+		uiHelper.onActivityResult(requestCode, resultCode, data);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		Log.i("SplashscreenActivity", "onPause");
+		uiHelper.onPause();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		Log.i("SplashscreenActivity", "onResume");
+		Session session = Session.getActiveSession();
+		if (session != null &&
+				(session.isOpened() || session.isClosed()) ) {
+			onSessionStateChange(session, session.getState(), null);
+		}
+		uiHelper.onResume();
+
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		Log.i("SplashscreenActivity", "onSaveInstanceState");
+		uiHelper.onSaveInstanceState(outState);
+	}
+
+	@Override
+	public void onUserAuthenticated() {
+		Log.i("SplashscreenActivity", "onUserAuthenticated");
+		authenticated = true;
+		if(geolocated){
+			goToPublicChat();
 		}
 	}
 
@@ -112,9 +201,10 @@ ConnectionCallbacks, OnConnectionFailedListener {
 				final String city = address.get(0).getLocality();
 				android.util.Log.i("Blindr", "City name=" + city);
 				Controller.getInstance().setCity(new City(city));
-				Intent i = new Intent(SplashscreenActivity.this, ConnectFacebookActivity.class);
-				startActivity(i);
-				finish();
+				geolocated = true;
+				if(authenticated){
+					goToPublicChat();
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 				CustomYesNoDialog dialog = new CustomYesNoDialog(this){
@@ -135,6 +225,13 @@ ConnectionCallbacks, OnConnectionFailedListener {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public void goToPublicChat(){
+		Intent i = new Intent(SplashscreenActivity.this, PublicChatActivity.class);
+		i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+		startActivity(i);
+		finish();
 	}
 
 	@Override

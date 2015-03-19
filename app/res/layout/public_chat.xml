@@ -55,8 +55,6 @@
         android:divider="@color/transparent"
         android:dividerHeight="10dp"
         android:listSelector="@android:color/transparent"
-        android:paddingBottom="10dp"
-        android:paddingTop="10dp"
         android:stackFromBottom="true" />
 
     <RelativeLayout

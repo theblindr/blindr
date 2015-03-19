@@ -1,5 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:ProgressWheel="http://schemas.android.com/apk/res/com.lesgens.blindr"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/main_color" >
@@ -12,5 +13,27 @@
         android:text="@string/app_name"
         android:textColor="@color/white"
         android:textSize="40sp" />
+
+    <com.facebook.widget.LoginButton
+        android:id="@+id/authButton"
+        style="@style/FacebookLoginButton"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:layout_alignParentBottom="true" />
+
+    <com.todddavies.components.progressbar.ProgressWheel
+        android:id="@+id/progressBar"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_centerInParent="true"
+        ProgressWheel:barColor="@color/dark_main_color"
+        ProgressWheel:barLength="80dp"
+        ProgressWheel:barWidth="5dp"
+        ProgressWheel:rimColor="@color/white"
+        ProgressWheel:rimWidth="5dp"
+        ProgressWheel:text="@string/authenticating"
+        ProgressWheel:textColor="@color/white"
+        ProgressWheel:textSize="15sp"
+        android:visibility="gone" />
 
 </RelativeLayout>

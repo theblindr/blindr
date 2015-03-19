@@ -2,6 +2,7 @@
 <resources>
     <color name="main_color">#0097fd</color>
     <color name="dark_main_color">#006AB0</color>
+    <color name="dark_main_color_semi_trans">#80006AB0</color>
     <color name="white">#FCFCFC</color>
     <color name="grey">#c2c2c2</color>
     <color name="faded_black">#26000000</color>

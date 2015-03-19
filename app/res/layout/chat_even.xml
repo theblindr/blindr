@@ -1,6 +1,6 @@
 <com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/swipe_layout"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
 
     <!-- Bottom View Start -->
@@ -11,8 +11,8 @@
         android:layout_height="match_parent"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingBottom="3dp"
-        android:paddingTop="3dp" >
+        android:paddingTop="1dp"
+        android:paddingBottom="1dp" >
 
         <ImageView
             android:id="@+id/delete_user"
@@ -30,13 +30,14 @@
             android:layout_weight="1"
             android:background="@drawable/green_bg_sel"
             android:clickable="true"
-            android:src="@drawable/mail" />
+            android:src="@drawable/mail"
+            android:tint="@color/white" />
 
         <!-- What you want to show -->
     </LinearLayout>
 
     <RelativeLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent" >
 
         <com.checkin.avatargenerator.RoundedImageView
