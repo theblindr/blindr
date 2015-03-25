@@ -1,4 +1,4 @@
-package com.lesgens.blindr.models;
+package com.lesgens.blindr.network;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -17,8 +17,14 @@ import android.util.Log;
 
 import com.checkin.avatargenerator.AvatarGenerator;
 import com.lesgens.blindr.controllers.Controller;
-import com.lesgens.blindr.models.HTTPRequest.RequestType;
-import com.lesgens.blindr.models.HTTPRequest.StatusCode;
+import com.lesgens.blindr.listeners.EventsListener;
+import com.lesgens.blindr.listeners.FacebookProfileListener;
+import com.lesgens.blindr.listeners.UserAuthenticatedListener;
+import com.lesgens.blindr.models.City;
+import com.lesgens.blindr.models.Event;
+import com.lesgens.blindr.models.Match;
+import com.lesgens.blindr.models.User;
+import com.lesgens.blindr.network.HTTPRequest.RequestType;
 
 public class Server {
 	

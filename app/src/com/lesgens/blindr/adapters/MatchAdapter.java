@@ -1,4 +1,4 @@
-package com.lesgens.blindr.models;
+package com.lesgens.blindr.adapters;
 
 import java.util.ArrayList;
 
@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lesgens.blindr.R;
+import com.lesgens.blindr.models.Match;
 
 public class MatchAdapter extends ArrayAdapter<Match>{
 	private Context mContext;

@@ -13,6 +13,7 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
@@ -23,16 +24,18 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.lesgens.blindr.adapters.PrivateChatAdapter;
 import com.lesgens.blindr.controllers.Controller;
+import com.lesgens.blindr.listeners.EventsListener;
 import com.lesgens.blindr.models.Event;
-import com.lesgens.blindr.models.EventsListener;
 import com.lesgens.blindr.models.Match;
 import com.lesgens.blindr.models.Message;
-import com.lesgens.blindr.models.PrivateChatAdapter;
-import com.lesgens.blindr.models.Server;
 import com.lesgens.blindr.models.User;
+import com.lesgens.blindr.network.Server;
+import com.lesgens.blindr.receivers.NetworkStateReceiver;
+import com.lesgens.blindr.receivers.NetworkStateReceiver.NetworkStateReceiverListener;
 
-public class PrivateChatActivity extends Activity implements OnClickListener, EventsListener {
+public class PrivateChatActivity extends Activity implements OnClickListener, EventsListener, NetworkStateReceiverListener {
 
 	private Typeface tf;
 	private ImageView sendBt;
@@ -42,6 +45,8 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 	private ScheduledExecutorService scheduler;
 	private Future<?> future;
 	private User remoteUser;
+	private TextView tvConnectionProblem;
+	private NetworkStateReceiver networkStateReceiver;
 
 	public static void show(Context context, String tokenId, String realName){
 		Intent i = new Intent(context, PrivateChatActivity.class);
@@ -99,6 +104,9 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 						}
 					}, 0, 5, TimeUnit.SECONDS);
 		}
+		
+		networkStateReceiver.addListener(this);
+	    this.registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
 	}
 
 	@Override
@@ -107,6 +115,9 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 		if(future != null){
 			future.cancel(true);
 		}
+		
+		networkStateReceiver.removeListener(this);
+	    this.unregisterReceiver(networkStateReceiver);
 	}
 
 	@Override
@@ -203,4 +214,16 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 			        }
 			    }
 			};
+
+	@Override
+	public void onNetworkAvailable() {
+		tvConnectionProblem.setVisibility(View.GONE);
+		sendBt.setEnabled(true);
+	}
+
+	@Override
+	public void onNetworkUnavailable() {
+		tvConnectionProblem.setVisibility(View.VISIBLE);
+		sendBt.setEnabled(false);
+	}
 }

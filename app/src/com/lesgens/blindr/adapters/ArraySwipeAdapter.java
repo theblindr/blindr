@@ -1,4 +1,4 @@
-package com.lesgens.blindr.models;
+package com.lesgens.blindr.adapters;
 import java.util.List;
 
 import android.content.Context;

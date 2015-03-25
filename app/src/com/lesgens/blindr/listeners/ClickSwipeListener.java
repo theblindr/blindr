@@ -1,18 +1,20 @@
-package com.lesgens.blindr.models;
+package com.lesgens.blindr.listeners;
 
 import android.app.Activity;
 import android.view.View;
 import android.view.View.OnClickListener;
 
 import com.lesgens.blindr.controllers.Controller;
+import com.lesgens.blindr.models.Message;
+import com.lesgens.blindr.network.Server;
 import com.lesgens.blindr.views.CustomYesNoDialog;
 import com.lesgens.blindr.R;
 
-public class ClickListenerSwipe implements OnClickListener {
+public class ClickSwipeListener implements OnClickListener {
 	private Message message;
 	private Activity activity;
 	
-	public ClickListenerSwipe(Activity context, Message message){
+	public ClickSwipeListener(Activity context, Message message){
 		this.activity = context;
 		this.message = message;
 	}

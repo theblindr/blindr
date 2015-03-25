@@ -45,19 +45,24 @@
             android:tint="@color/main_color" />
     </RelativeLayout>
 
-    <View
-        android:id="@+id/sep"
+    <TextView
+        android:id="@+id/connection_problem"
         android:layout_width="match_parent"
-        android:layout_height="2px"
+        android:layout_height="20dp"
         android:layout_below="@id/topBar"
-        android:background="#e2e2e2" />
+        android:background="@color/red"
+        android:gravity="center"
+        android:text="@string/lost_connectivity"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:visibility="gone" />
 
     <se.emilsjolander.stickylistheaders.StickyListHeadersListView
         android:id="@+id/list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_above="@+id/bottomBar"
-        android:layout_below="@id/sep"
+        android:layout_below="@id/connection_problem"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         StickyListHeadersListView:hasStickyHeaders="false"

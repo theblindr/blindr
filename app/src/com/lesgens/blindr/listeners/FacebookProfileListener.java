@@ -1,4 +1,4 @@
-package com.lesgens.blindr.models;
+package com.lesgens.blindr.listeners;
 
 import java.util.List;
 

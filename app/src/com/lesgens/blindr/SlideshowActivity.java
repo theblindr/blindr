@@ -29,9 +29,9 @@ import android.widget.ImageView;
 import android.widget.ViewFlipper;
 
 import com.lesgens.blindr.controllers.Controller;
-import com.lesgens.blindr.models.FacebookProfileListener;
-import com.lesgens.blindr.models.Server;
+import com.lesgens.blindr.listeners.FacebookProfileListener;
 import com.lesgens.blindr.models.User;
+import com.lesgens.blindr.network.Server;
 import com.todddavies.components.progressbar.ProgressWheel;
 
 public class SlideshowActivity extends Activity implements FacebookProfileListener{

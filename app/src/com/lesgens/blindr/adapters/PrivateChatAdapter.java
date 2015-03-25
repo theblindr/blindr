@@ -1,4 +1,4 @@
-package com.lesgens.blindr.models;
+package com.lesgens.blindr.adapters;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -16,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.lesgens.blindr.R;
+import com.lesgens.blindr.models.Message;
 
 public class PrivateChatAdapter extends ArrayAdapter<Message> implements StickyListHeadersAdapter {
 	private Context mContext;

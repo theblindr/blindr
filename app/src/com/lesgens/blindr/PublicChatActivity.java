@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 import android.app.Activity;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,19 +28,20 @@ import android.widget.TextView;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu.OnOpenListener;
+import com.lesgens.blindr.adapters.MatchAdapter;
+import com.lesgens.blindr.adapters.PublicChatAdapter;
 import com.lesgens.blindr.controllers.Controller;
+import com.lesgens.blindr.listeners.EventsListener;
 import com.lesgens.blindr.models.City;
 import com.lesgens.blindr.models.Event;
-import com.lesgens.blindr.models.EventsListener;
 import com.lesgens.blindr.models.Match;
-import com.lesgens.blindr.models.MatchAdapter;
 import com.lesgens.blindr.models.Message;
-import com.lesgens.blindr.models.PublicChatAdapter;
-import com.lesgens.blindr.models.Server;
 import com.lesgens.blindr.models.User;
-import com.lesgens.blindr.R;
+import com.lesgens.blindr.network.Server;
+import com.lesgens.blindr.receivers.NetworkStateReceiver;
+import com.lesgens.blindr.receivers.NetworkStateReceiver.NetworkStateReceiverListener;
 
-public class PublicChatActivity extends Activity implements OnClickListener, EventsListener, OnItemClickListener, OnOpenListener {
+public class PublicChatActivity extends Activity implements OnClickListener, EventsListener, OnItemClickListener, OnOpenListener, NetworkStateReceiverListener {
 	private Typeface tf;
 	private ImageView sendBt;
 	private PublicChatAdapter chatAdapter;
@@ -51,6 +53,8 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 	private MatchAdapter matchAdapter;
 	private ScheduledExecutorService scheduler;
 	private Future<?> future;
+	private TextView tvConnectionProblem;
+	private NetworkStateReceiver networkStateReceiver;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +66,8 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 		setContentView(R.layout.public_chat_container);
 
 		TextView city = (TextView) findViewById(R.id.city_name);
+		
+		tvConnectionProblem = (TextView) findViewById(R.id.connection_problem);
 
 		tf = Typeface.createFromAsset(getAssets(), "fonts/Raleway_Thin.otf");
 		city.setTypeface(tf);
@@ -87,6 +93,8 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 		listPrivate = (ListView) findViewById(R.id.list_private);
 		listPrivate.setAdapter(matchAdapter);
 		listPrivate.setOnItemClickListener(this);
+		
+		networkStateReceiver = new NetworkStateReceiver(this);
 
 
 		Server.addEventsListener(this);
@@ -107,6 +115,9 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 						}
 					}, 0, 5, TimeUnit.SECONDS);
 		}
+		
+		networkStateReceiver.addListener(this);
+	    this.registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
 	}
 
 	@Override
@@ -115,6 +126,9 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 		if(future != null){
 			future.cancel(true);
 		}
+		
+		networkStateReceiver.removeListener(this);
+	    this.unregisterReceiver(networkStateReceiver);
 	}
 
 	@Override
@@ -232,5 +246,17 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 	@Override
 	public void onOpen() {
 		hideKeyboard();
+	}
+
+	@Override
+	public void onNetworkAvailable() {
+		tvConnectionProblem.setVisibility(View.GONE);
+		sendBt.setEnabled(true);
+	}
+
+	@Override
+	public void onNetworkUnavailable() {
+		tvConnectionProblem.setVisibility(View.VISIBLE);
+		sendBt.setEnabled(false);
 	}
 }

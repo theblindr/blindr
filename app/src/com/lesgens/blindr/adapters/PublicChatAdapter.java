@@ -1,4 +1,4 @@
-package com.lesgens.blindr.models;
+package com.lesgens.blindr.adapters;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -19,9 +19,11 @@ import android.widget.TextView;
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.SwipeLayout.Status;
 import com.lesgens.blindr.R;
+import com.lesgens.blindr.adapters.PrivateChatAdapter.HeaderViewHolder;
 import com.lesgens.blindr.controllers.Controller;
+import com.lesgens.blindr.listeners.ClickSwipeListener;
+import com.lesgens.blindr.models.Message;
 import com.lesgens.blindr.models.Message.Gender;
-import com.lesgens.blindr.models.PrivateChatAdapter.HeaderViewHolder;
 
 public class PublicChatAdapter extends ArraySwipeAdapter<Message> implements SwipeLayout.SwipeListener, StickyListHeadersAdapter{
 	private Context mContext;
@@ -132,8 +134,8 @@ public class PublicChatAdapter extends ArraySwipeAdapter<Message> implements Swi
 
 			holder.swipeLayout.addSwipeListener(this);
 
-			rowView.findViewById(R.id.delete_user).setOnClickListener(new ClickListenerSwipe((Activity) getContext(), message));
-			rowView.findViewById(R.id.like_user).setOnClickListener(new ClickListenerSwipe((Activity) mContext, message));
+			rowView.findViewById(R.id.delete_user).setOnClickListener(new ClickSwipeListener((Activity) getContext(), message));
+			rowView.findViewById(R.id.like_user).setOnClickListener(new ClickSwipeListener((Activity) mContext, message));
 		}
 
 		return rowView;

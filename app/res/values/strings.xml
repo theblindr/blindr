@@ -10,6 +10,7 @@
     <string name="want_to_like">Do you really want to like %s?</string>
     <string name="location_not_found">Your location has not been found.\nPlease try again.</string>
     <string name="no_network">No network is available.\nPlease try again later.</string>
+    <string name="lost_connectivity">You are currently disconnected</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="ok">Ok</string>

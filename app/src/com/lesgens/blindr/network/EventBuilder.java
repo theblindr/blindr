@@ -1,9 +1,15 @@
-package com.lesgens.blindr.models;
+package com.lesgens.blindr.network;
 
 import java.sql.Timestamp;
 import java.util.UUID;
 
 import com.lesgens.blindr.controllers.Controller;
+import com.lesgens.blindr.models.City;
+import com.lesgens.blindr.models.Event;
+import com.lesgens.blindr.models.IDestination;
+import com.lesgens.blindr.models.Match;
+import com.lesgens.blindr.models.Message;
+import com.lesgens.blindr.models.User;
 import com.lesgens.blindr.models.Message.Gender;
 
 public class EventBuilder {

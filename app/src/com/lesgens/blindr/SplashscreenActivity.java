@@ -30,9 +30,9 @@ import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.location.LocationServices;
 import com.lesgens.blindr.controllers.Controller;
+import com.lesgens.blindr.listeners.UserAuthenticatedListener;
 import com.lesgens.blindr.models.City;
-import com.lesgens.blindr.models.Server;
-import com.lesgens.blindr.models.UserAuthenticatedListener;
+import com.lesgens.blindr.network.Server;
 import com.lesgens.blindr.views.CustomYesNoDialog;
 import com.todddavies.components.progressbar.ProgressWheel;
 

@@ -1,6 +1,10 @@
-package com.lesgens.blindr.models;
+package com.lesgens.blindr.listeners;
 
 import java.util.List;
+
+import com.lesgens.blindr.models.Event;
+import com.lesgens.blindr.models.Match;
+import com.lesgens.blindr.models.User;
 
 public interface EventsListener {
 	

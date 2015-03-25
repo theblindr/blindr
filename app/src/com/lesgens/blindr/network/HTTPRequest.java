@@ -1,4 +1,4 @@
-package com.lesgens.blindr.models;
+package com.lesgens.blindr.network;
 
 import java.io.BufferedReader;
 import java.io.IOException;
