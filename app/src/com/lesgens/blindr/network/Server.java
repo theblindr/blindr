@@ -360,12 +360,24 @@ public class Server {
 		userAuthenticatedListeners.add(listener);
 	}
 	
+	public static void removeUserAuthenticatedListener(UserAuthenticatedListener listener) {
+		userAuthenticatedListeners.remove(listener);
+	}
+	
 	public static void addEventsListener(EventsListener listener) {
 		eventsListeners.add(listener);
 	}
 	
+	public static void removeEventsListener(EventsListener listener) {
+		eventsListeners.remove(listener);
+	}
+	
 	public static void addProfileListener(FacebookProfileListener listener) {
 		profileListeners.add(listener);
+	}
+	
+	public static void removeProfileListener(FacebookProfileListener listener) {
+		profileListeners.remove(listener);
 	}
 	
 	private static String readUserToken(Reader in) throws IOException {

@@ -94,5 +94,14 @@
         <attr name="hasStickyHeaders" format="boolean" />
         <attr name="isDrawingListUnderStickyHeader" format="boolean" />
     </declare-styleable>
+    
+    <declare-styleable name="SlideshowView">
+       <attr name="selectedColor" format="color" />
+       <attr name="unselectedColor" format="color" />
+       <attr name="currentColor" format="color" />
+       <attr name="picturesWidth" format="dimension" />
+       <attr name="picturesHeight" format="dimension" />
+       <attr name="dotsSize" format="dimension" />
+   </declare-styleable>
 
 </resources>

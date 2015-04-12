@@ -137,6 +137,7 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 		if(scheduler != null){
 			scheduler.shutdownNow();
 		}
+		Server.removeEventsListener(this);
 	}
 
 	@Override

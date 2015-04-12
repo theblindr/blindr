@@ -1,5 +1,6 @@
 package com.lesgens.blindr;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -9,16 +10,29 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -27,6 +41,7 @@ import android.widget.TextView;
 import com.lesgens.blindr.adapters.PrivateChatAdapter;
 import com.lesgens.blindr.controllers.Controller;
 import com.lesgens.blindr.listeners.EventsListener;
+import com.lesgens.blindr.listeners.FacebookProfileListener;
 import com.lesgens.blindr.models.Event;
 import com.lesgens.blindr.models.Match;
 import com.lesgens.blindr.models.Message;
@@ -34,8 +49,11 @@ import com.lesgens.blindr.models.User;
 import com.lesgens.blindr.network.Server;
 import com.lesgens.blindr.receivers.NetworkStateReceiver;
 import com.lesgens.blindr.receivers.NetworkStateReceiver.NetworkStateReceiverListener;
+import com.lesgens.blindr.utils.DropDownAnim;
+import com.lesgens.blindr.utils.Utils;
+import com.lesgens.blindr.views.SlideshowView;
 
-public class PrivateChatActivity extends Activity implements OnClickListener, EventsListener, NetworkStateReceiverListener {
+public class PrivateChatActivity extends Activity implements OnClickListener, EventsListener, NetworkStateReceiverListener, FacebookProfileListener {
 
 	private Typeface tf;
 	private ImageView sendBt;
@@ -47,6 +65,8 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 	private User remoteUser;
 	private TextView tvConnectionProblem;
 	private NetworkStateReceiver networkStateReceiver;
+	private SlideshowView slideshow;
+	private View slideshowSep;
 
 	public static void show(Context context, String tokenId, String realName){
 		Intent i = new Intent(context, PrivateChatActivity.class);
@@ -72,7 +92,7 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 		fbName.setText(getIntent().getStringExtra("realName"));
 
 		((ImageView) findViewById(R.id.avatar)).setImageBitmap(remoteUser.getAvatar());
-		findViewById(R.id.avatar).setOnClickListener(this);
+		findViewById(R.id.back).setOnClickListener(this);
 		
 		findViewById(R.id.photos).setOnClickListener(this);
 
@@ -81,6 +101,11 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 
 		sendBt = (ImageView) findViewById(R.id.send);
 		sendBt.setOnClickListener(this);
+		
+		tvConnectionProblem = (TextView) findViewById(R.id.connection_problem);
+		
+		slideshow = (SlideshowView) findViewById(R.id.slideshow);
+		slideshowSep = findViewById(R.id.slideshow_sep);
 
 		chatAdapter = new PrivateChatAdapter(this, new ArrayList<Message>());
 		listMessages = (StickyListHeadersListView) findViewById(R.id.list);
@@ -88,7 +113,11 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 		listMessages.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
 
 		Server.addEventsListener(this);
+		Server.addProfileListener(this);
+		Server.getUserFacebookInfos(remoteUser);
 		scheduler = Executors.newSingleThreadScheduledExecutor();
+		
+		networkStateReceiver = new NetworkStateReceiver(this);
 
 	}
 
@@ -126,6 +155,9 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 		if(scheduler != null){
 			scheduler.shutdownNow();
 		}
+		Server.removeProfileListener(this);
+		Server.removeEventsListener(this);
+		slideshow.recycleBitmaps();
 	}
 
 	@Override
@@ -140,10 +172,48 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 				editText.setText("");
 				scrollMyListViewToTheBottomNowWeHere();
 			}
-		} else if(v.getId() == R.id.avatar){
+		} else if(v.getId() == R.id.back){
 			onBackPressed();
 		} else if(v.getId() == R.id.photos){
-			SlideshowActivity.show(this, remoteUser.getId());
+			onPhotoPressed();
+		}
+	}
+
+	private void onPhotoPressed() {
+		if(slideshow.getVisibility() == View.GONE){
+			Animation dropDown = new DropDownAnim(slideshow, Utils.dpInPixels(this, 200), true);
+			dropDown.setDuration(200);
+			dropDown.setAnimationListener(new AnimationListener(){
+
+				@Override
+				public void onAnimationStart(Animation animation) {
+					slideshow.setVisibility(View.VISIBLE);
+					slideshowSep.setVisibility(View.VISIBLE);
+				}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {}});
+			slideshow.startAnimation(dropDown);
+		} else{
+			Animation dropDown = new DropDownAnim(slideshow, Utils.dpInPixels(this, 200), false);
+			dropDown.setDuration(200);
+			dropDown.setAnimationListener(new AnimationListener(){
+
+				@Override
+				public void onAnimationStart(Animation animation) {}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					slideshow.setVisibility(View.GONE);
+					slideshowSep.setVisibility(View.GONE);
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {}});
+			slideshow.startAnimation(dropDown);
 		}
 	}
 
@@ -225,5 +295,78 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 	public void onNetworkUnavailable() {
 		tvConnectionProblem.setVisibility(View.VISIBLE);
 		sendBt.setEnabled(false);
+	}
+	
+	@Override
+	public void onProfilePicturesReceived(List<String> pictures) {
+		for(String pic : pictures){
+			new ImageDownloader().execute(pic);
+		}
+		Animation anim = AnimationUtils.loadAnimation(this, R.anim.blink);
+		findViewById(R.id.photos).startAnimation(anim);
+	}
+	
+	private class ImageDownloader extends AsyncTask<String,Void,Bitmap> {
+
+		@Override
+		protected Bitmap doInBackground(String... param) {
+			// TODO Auto-generated method stub
+			return downloadBitmap(param[0]);
+		}
+
+		@Override
+		protected void onPostExecute(Bitmap result) {
+			Log.i("Async-Example", "onPostExecute Called");
+			slideshow.addPicture(result);
+		}
+
+		private Bitmap downloadBitmap(String url) {
+			// initilize the default HTTP client object
+			final DefaultHttpClient client = new DefaultHttpClient();
+
+			//forming a HttoGet request 
+			final HttpGet getRequest = new HttpGet(url);
+			try {
+
+				HttpResponse response = client.execute(getRequest);
+
+				//check 200 OK for success
+				final int statusCode = response.getStatusLine().getStatusCode();
+
+				if (statusCode != HttpStatus.SC_OK) {
+					Log.w("ImageDownloader", "Error " + statusCode + 
+							" while retrieving bitmap from " + url);
+					return null;
+
+				}
+
+				final HttpEntity entity = response.getEntity();
+				if (entity != null) {
+					InputStream inputStream = null;
+					try {
+						// getting contents from the stream 
+						inputStream = entity.getContent();
+
+						// decoding stream data back into image Bitmap that android understands
+						final Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+						final Bitmap bitmapScaled = Utils.scaleDown(bitmap, Utils.dpInPixels(PrivateChatActivity.this, 300), true);
+						bitmap.recycle();
+						return bitmapScaled;
+					} finally {
+						if (inputStream != null) {
+							inputStream.close();
+						}
+						entity.consumeContent();
+					}
+				}
+			} catch (Exception e) {
+				// You Could provide a more explicit error message for IOException
+				getRequest.abort();
+				Log.e("ImageDownloader", "Something went wrong while" +
+						" retrieving bitmap from " + url + e.toString());
+			} 
+
+			return null;
+		}
 	}
 }

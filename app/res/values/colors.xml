@@ -16,4 +16,5 @@
     <color name="gray">#e2e2e2</color>
     <color name="transparent">#00000000</color>
     <color name="red">#FF6666</color>
+    <color name="faded_white">#26FFFFFF</color>
 </resources>

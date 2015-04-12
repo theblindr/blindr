@@ -28,6 +28,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.lesgens.blindr.controllers.Controller;
 import com.lesgens.blindr.listeners.UserAuthenticatedListener;
@@ -37,13 +39,14 @@ import com.lesgens.blindr.views.CustomYesNoDialog;
 import com.todddavies.components.progressbar.ProgressWheel;
 
 public class SplashscreenActivity extends Activity implements
-ConnectionCallbacks, OnConnectionFailedListener, UserAuthenticatedListener {
+ConnectionCallbacks, OnConnectionFailedListener, UserAuthenticatedListener, LocationListener {
 	private GoogleApiClient mGoogleApiClient;
 	private Location mLastLocation;
 	private static final String[] PERMISSIONS = {"public_profile", "user_photos"};
-	private boolean connected = false;
-	private boolean authenticated = false;
-	private boolean geolocated = false;
+	private boolean mConnected = false;
+	private boolean mAuthenticated = false;
+	private boolean mGeolocated = false;
+	private LocationRequest mLocationRequest;
 
 	private UiLifecycleHelper uiHelper;
 
@@ -56,8 +59,8 @@ ConnectionCallbacks, OnConnectionFailedListener, UserAuthenticatedListener {
 	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
 		Log.i("SplashscreenActivity", "onSessionStateChange");
 		Controller.getInstance().setSession(session);
-		if(state.isOpened() && !connected){
-			connected = true;
+		if(state.isOpened() && !mConnected){
+			mConnected = true;
 			session.refreshPermissions();
 			List<String> permissions = session.getPermissions();
 			Log.i("FACEBOOK_CONNECTION", "Logged in..." + permissions.toString());
@@ -67,7 +70,7 @@ ConnectionCallbacks, OnConnectionFailedListener, UserAuthenticatedListener {
 			((ProgressWheel) findViewById(R.id.progressBar)).spin();
 			Server.connect(session.getAccessToken());
 		} else if(state.isClosed()) {
-			connected = false;
+			mConnected = false;
 			Log.i("FACEBOOK_CONNECTION", "Logged out...");
 		}
 	}
@@ -101,7 +104,10 @@ ConnectionCallbacks, OnConnectionFailedListener, UserAuthenticatedListener {
 			dialog.transformAsOkDialog();
 			dialog.setDialogText(getString(R.string.no_network));
 		} else{
-
+			mLocationRequest = new LocationRequest();
+		    mLocationRequest.setInterval(2000);
+		    mLocationRequest.setNumUpdates(1);
+		    mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 			new Handler(getMainLooper()).postDelayed(new Runnable(){
 
 				@Override
@@ -130,6 +136,8 @@ ConnectionCallbacks, OnConnectionFailedListener, UserAuthenticatedListener {
 				mGoogleApiClient.disconnect();
 			}
 		}
+		
+		Server.removeUserAuthenticatedListener(this);
 	}
 	
 	@Override
@@ -169,8 +177,8 @@ ConnectionCallbacks, OnConnectionFailedListener, UserAuthenticatedListener {
 	@Override
 	public void onUserAuthenticated() {
 		Log.i("SplashscreenActivity", "onUserAuthenticated");
-		authenticated = true;
-		if(geolocated){
+		mAuthenticated = true;
+		if(mGeolocated){
 			goToPublicChat();
 		}
 	}
@@ -194,36 +202,44 @@ ConnectionCallbacks, OnConnectionFailedListener, UserAuthenticatedListener {
 	public void onConnected(Bundle connectionHint) {
 		mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
 				mGoogleApiClient);
+		Log.i("SplashscreenActivity", "Last location=" + mLastLocation);
 		if (mLastLocation != null) {
-			Geocoder geoCoder = new Geocoder(this, Locale.CANADA);
-			try {
-				List<Address> address = geoCoder.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1);
-				final String city = address.get(0).getLocality();
-				android.util.Log.i("Blindr", "City name=" + city);
-				Controller.getInstance().setCity(new City(city));
-				geolocated = true;
-				if(authenticated){
-					goToPublicChat();
+			locationFound();
+		} else{
+			LocationServices.FusedLocationApi.requestLocationUpdates(
+		            mGoogleApiClient, mLocationRequest, this);
+		}
+	}
+	
+	public void locationFound(){
+		Log.i("SplashscreenActivity", "Location found");
+		Geocoder geoCoder = new Geocoder(this, Locale.CANADA);
+		try {
+			List<Address> address = geoCoder.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1);
+			final String city = address.get(0).getLocality();
+			Controller.getInstance().setCity(new City(city));
+			mGeolocated = true;
+			if(mAuthenticated){
+				goToPublicChat();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			CustomYesNoDialog dialog = new CustomYesNoDialog(this){
+
+				@Override
+				public void onPositiveClick() {
+					super.onPositiveClick();
+					finish();
 				}
-			} catch (IOException e) {
-				e.printStackTrace();
-				CustomYesNoDialog dialog = new CustomYesNoDialog(this){
 
-					@Override
-					public void onPositiveClick() {
-						super.onPositiveClick();
-						finish();
-					}
+			};
 
-				};
-
-				dialog.show();
-				dialog.transformAsOkDialog();
-				dialog.setDialogText(getString(R.string.location_not_found));
-			}
-			catch (NullPointerException e) {
-				e.printStackTrace();
-			}
+			dialog.show();
+			dialog.transformAsOkDialog();
+			dialog.setDialogText(getString(R.string.location_not_found));
+		}
+		catch (NullPointerException e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -244,5 +260,14 @@ ConnectionCallbacks, OnConnectionFailedListener, UserAuthenticatedListener {
 	public void onConnectionSuspended(int cause) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void onLocationChanged(Location location) {
+		Log.i("SplashscreenActivity", "Location change");
+		if(location != null){
+			mLastLocation = location;
+			locationFound();
+		}
 	}
 }

@@ -1,44 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:ProgressWheel="http://schemas.android.com/apk/res/com.lesgens.blindr"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="@color/black"
-    android:orientation="vertical" >
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
 
-    <ViewFlipper
-        android:id="@+id/view_flipper"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
-    </ViewFlipper>
-
-    <ImageView
-        android:id="@+id/swipe_left"
+    <HorizontalScrollView
+        android:id="@+id/pictures_scrollview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:src="@drawable/swipe_left"
-        android:visibility="gone" />
+        android:scrollbars="none" >
 
-    <ImageView
-        android:id="@+id/swipe_right"
+        <LinearLayout
+            android:id="@+id/pictures_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <LinearLayout
+        android:id="@+id/dots_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:src="@drawable/swipe_right"
-        android:visibility="gone" />
-
-    <com.todddavies.components.progressbar.ProgressWheel
-        android:id="@+id/progressBar"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:layout_centerInParent="true"
-        ProgressWheel:barColor="@color/main_color"
-        ProgressWheel:barLength="40dp"
-        ProgressWheel:barWidth="3dp"
-        ProgressWheel:rimColor="@color/white"
-        ProgressWheel:rimWidth="3dp" />
+        android:layout_below="@id/pictures_scrollview"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal" >
+    </LinearLayout>
 
 </RelativeLayout>

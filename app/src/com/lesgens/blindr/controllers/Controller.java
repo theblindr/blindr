@@ -7,13 +7,13 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.TypedValue;
 
 import com.checkin.avatargenerator.AvatarGenerator;
 import com.facebook.Session;
 import com.lesgens.blindr.models.City;
 import com.lesgens.blindr.models.Match;
 import com.lesgens.blindr.models.User;
+import com.lesgens.blindr.utils.Utils;
 
 public class Controller {
 	private City city;
@@ -50,7 +50,7 @@ public class Controller {
 	public void addUser(User user){
 		users.put(user.getId(), user);
 	}
-
+	
 	public User getUser(String tokenId){
 		if(users.get(tokenId) == null){
 			users.put(tokenId, new User("user" + tokenId, AvatarGenerator.generate(dimensionAvatar, dimensionAvatar), tokenId));
@@ -91,13 +91,8 @@ public class Controller {
 		return matches;
 	}
 
-	private static int dpInPixels(Context context, int dp) {
-		return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources()
-				.getDisplayMetrics());
-	}
-
 	public void setDimensionAvatar(Context context) {
-		dimensionAvatar = dpInPixels(context, 50);
+		dimensionAvatar = Utils.dpInPixels(context, 50);
 	}
 
 	public int getDimensionAvatar() {
