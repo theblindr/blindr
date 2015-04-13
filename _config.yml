@@ -1,6 +1,6 @@
 # Site settings
 title: blindr
-email: your-email@domain.com
+email: marc.antoine.hinse@gmail.com
 url: https://example.github.io
 description: "Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description."
 favIconPath: "img/favicon.png"
@@ -17,27 +17,18 @@ color:
 
 # Footer settings
 footer:
-  copyright: DCIÉTS
-  location: 1100 Rue Notre-Dame Ouest, Montréal, QC H3C 1K3, Canada
+  copyright: Marc-Antoine Hinse
   social: Around the Tubes
-  credits: Credits
 
 # Social networks usernames (many more available: google-plus, flickr, dribbble, pinterest, instagram, tumblr, linkedin, etc.)
 social:
   - title: twitter
-    url: http://twitter.com/dciets
+    url: https://twitter.com/tymarc1
   - title: facebook
-    url: https://www.facebook.com/dciets
+    url: https://www.facebook.com/mhinse
   - title: github
-    url: https://github.com/ldionmarcil/blindr
+    url: https://github.com/TyMarc/blindr
 
-# Postal address (add as many lines as necessary)
-address:
-  - line: 1100 Rue Notre-Dame Ouest
-  - line: Montréal, QC
-
-# Credits content
-credits: 'Freelancer is a free to use, open source Bootstrap theme created by <a href="http://startbootstrap.com">Start Bootstrap</a>.'
 
 # Build settings
 markdown: kramdown
