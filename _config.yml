@@ -1,7 +1,7 @@
 # Site settings
 title: blindr
 email: marc.antoine.hinse@gmail.com
-url: https://example.github.io
+url: http://blindr.me/
 description: "Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description."
 favIconPath: "img/favicon.png"
 previewPath: "img/nexus.png"
@@ -17,7 +17,7 @@ color:
 
 # Footer settings
 footer:
-  copyright: Marc-Antoine Hinse
+  copyright: '#lesgens'
   social: Around the Tubes
 
 # Social networks usernames (many more available: google-plus, flickr, dribbble, pinterest, instagram, tumblr, linkedin, etc.)
