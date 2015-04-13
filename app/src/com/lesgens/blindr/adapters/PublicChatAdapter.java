@@ -9,23 +9,30 @@ import java.util.Date;
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.SwipeLayout.Status;
+import com.lesgens.blindr.ImageViewerActivity;
 import com.lesgens.blindr.R;
 import com.lesgens.blindr.adapters.PrivateChatAdapter.HeaderViewHolder;
 import com.lesgens.blindr.controllers.Controller;
 import com.lesgens.blindr.listeners.ClickSwipeListener;
 import com.lesgens.blindr.models.Message;
 import com.lesgens.blindr.models.Message.Gender;
+import com.lesgens.blindr.utils.Utils;
 
-public class PublicChatAdapter extends ArraySwipeAdapter<Message> implements SwipeLayout.SwipeListener, StickyListHeadersAdapter{
+public class PublicChatAdapter extends ArraySwipeAdapter<Message> implements SwipeLayout.SwipeListener, StickyListHeadersAdapter, OnClickListener{
 	private Context mContext;
 	private LayoutInflater mInflater = null;
 
@@ -59,6 +66,7 @@ public class PublicChatAdapter extends ArraySwipeAdapter<Message> implements Swi
 		public TextView message;
 		public TextView time;
 		public SwipeLayout swipeLayout;
+		public ImageView picture;
 	}
 
 
@@ -84,6 +92,7 @@ public class PublicChatAdapter extends ArraySwipeAdapter<Message> implements Swi
 			viewHolder.swipeLayout = null;
 			viewHolder.message = (TextView) rowView.findViewById(R.id.message);
 			viewHolder.time = (TextView) rowView.findViewById(R.id.time);
+			viewHolder.picture = (ImageView) rowView.findViewById(R.id.picture);
 			rowView.setTag(viewHolder);
 		} else{
 			rowView = getInflater().inflate(R.layout.chat_even, parent, false);
@@ -94,6 +103,7 @@ public class PublicChatAdapter extends ArraySwipeAdapter<Message> implements Swi
 			viewHolder.message = (TextView) rowView.findViewById(R.id.message);
 			viewHolder.time = (TextView) rowView.findViewById(R.id.time);
 			viewHolder.swipeLayout =  (SwipeLayout) rowView.findViewById(R.id.swipe_layout);
+			viewHolder.picture = (ImageView) rowView.findViewById(R.id.picture);
 
 			rowView.setTag(viewHolder);
 
@@ -102,8 +112,21 @@ public class PublicChatAdapter extends ArraySwipeAdapter<Message> implements Swi
 		// fill data
 		ViewHolder holder = (ViewHolder) rowView.getTag();
 
-		holder.message.setText(message.getMessage());
-		holder.time.setText(sdfMessage.format(message.getTimestamp()));
+		if(message.getMessage().startsWith(Utils.BLINDR_IMAGE_BASE)){
+			holder.message.setVisibility(View.GONE);
+			holder.time.setVisibility(View.GONE);
+			holder.picture.setVisibility(View.VISIBLE);
+			String encoded = message.getMessage().substring(Utils.BLINDR_IMAGE_BASE.length());
+			byte[] bytes = Base64.decode(encoded, Base64.DEFAULT);
+			Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+			holder.picture.setImageBitmap(bitmap);
+			holder.picture.setOnClickListener(this);
+		} else{
+			holder.message.setVisibility(View.VISIBLE);
+			holder.time.setVisibility(View.VISIBLE);
+			holder.message.setText(message.getMessage());
+			holder.time.setText(sdfMessage.format(message.getTimestamp()));
+		}
 
 		if(holder.name != null){
 			if(Controller.getInstance().checkIfMutualWith(message.getFakeName())){
@@ -158,12 +181,7 @@ public class PublicChatAdapter extends ArraySwipeAdapter<Message> implements Swi
 	public void addMessage(Message message){
 		if(!messages.isEmpty()){
 			if(!messages.contains(message)){
-//				final Message lastMessage = messages.get(messages.size()-1);
-//				if(lastMessage.getUser().getId().equals(message.getUser().getId())){
-//					lastMessage.addMessage(message.getMessage(), message.getId());
-//				} else{
-					super.add(message);
-//				}
+				super.add(message);
 			}
 		} else{
 			super.add(message);
@@ -271,5 +289,14 @@ public class PublicChatAdapter extends ArraySwipeAdapter<Message> implements Swi
 			//handle the exception according to your own situation
 		}
 		return diff;
+	}
+
+	@Override
+	public void onClick(View v) {
+		if(v instanceof ImageView){
+			ImageView image = (ImageView) v;
+			Bitmap bitmap = ((BitmapDrawable)image.getDrawable()).getBitmap();
+			ImageViewerActivity.show(getContext(), bitmap);
+		}
 	}
 }

@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.util.TypedValue;
 
 public class Utils {
+	
+	public static final String BLINDR_IMAGE_BASE = "BLINDR_IMAGE_BASE:";
 
 	public static int dpInPixels(Context context, int dp) {
 		return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources()

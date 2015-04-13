@@ -11,8 +11,8 @@
         android:layout_height="match_parent"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingTop="1dp"
-        android:paddingBottom="1dp" >
+        android:paddingBottom="1dp"
+        android:paddingTop="1dp" >
 
         <ImageView
             android:id="@+id/delete_user"
@@ -66,6 +66,14 @@
                 android:text="@string/hello_world"
                 android:textColor="@color/darker_grey"
                 android:textSize="12sp" />
+
+            <ImageView
+                android:id="@+id/picture"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_below="@id/name"
+                android:scaleType="centerCrop"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/message"

@@ -17,5 +17,6 @@
     <string name="title_activity_private_chat">Private Chat</string>
     <string name="title_activity_slideshow">SlideshowActivity</string>
     <string name="authenticating">Authenticating...</string>
+    <string name="title_activity_image_viewer">ImageViewerActivity</string>
 
 </resources>

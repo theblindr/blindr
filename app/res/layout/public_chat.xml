@@ -77,7 +77,7 @@
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
-            android:layout_toLeftOf="@+id/send"
+            android:layout_toLeftOf="@+id/send_picture"
             android:background="@drawable/rounded_edittext"
             android:gravity="center_vertical"
             android:inputType="textCapSentences"
@@ -85,15 +85,27 @@
             android:paddingRight="10dp" />
 
         <ImageView
+            android:id="@+id/send_picture"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_toLeftOf="@+id/send"
+            android:background="@drawable/gen_black_sel"
+            android:padding="5dp"
+            android:src="@android:drawable/ic_menu_camera" />
+
+        <ImageView
             android:id="@+id/send"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:background="@drawable/circle_white_sel"
-            android:padding="10dp"
+            android:background="@drawable/gen_black_sel"
+            android:padding="8dp"
             android:src="@drawable/send" >
         </ImageView>
     </RelativeLayout>

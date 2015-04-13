@@ -1,5 +1,7 @@
 package com.lesgens.blindr;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -11,10 +13,17 @@ import java.util.concurrent.TimeUnit;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
+import android.util.Base64;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -40,8 +49,10 @@ import com.lesgens.blindr.models.User;
 import com.lesgens.blindr.network.Server;
 import com.lesgens.blindr.receivers.NetworkStateReceiver;
 import com.lesgens.blindr.receivers.NetworkStateReceiver.NetworkStateReceiverListener;
+import com.lesgens.blindr.utils.Utils;
 
 public class PublicChatActivity extends Activity implements OnClickListener, EventsListener, OnItemClickListener, OnOpenListener, NetworkStateReceiverListener {
+	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
 	private Typeface tf;
 	private ImageView sendBt;
 	private PublicChatAdapter chatAdapter;
@@ -55,6 +66,7 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 	private Future<?> future;
 	private TextView tvConnectionProblem;
 	private NetworkStateReceiver networkStateReceiver;
+	private Uri imageUri;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +78,7 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 		setContentView(R.layout.public_chat_container);
 
 		TextView city = (TextView) findViewById(R.id.city_name);
-		
+
 		tvConnectionProblem = (TextView) findViewById(R.id.connection_problem);
 
 		tf = Typeface.createFromAsset(getAssets(), "fonts/Raleway_Thin.otf");
@@ -81,6 +93,13 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 		sendBt = (ImageView) findViewById(R.id.send);
 		sendBt.setOnClickListener(this);
 
+
+		if(getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA) == false){
+			findViewById(R.id.send_picture).setVisibility(View.GONE);
+		} else{
+			findViewById(R.id.send_picture).setOnClickListener(this);
+		}
+
 		menuPrivate = (ImageView) findViewById(R.id.menu_private);
 		menuPrivate.setOnClickListener(this);
 
@@ -93,7 +112,7 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 		listPrivate = (ListView) findViewById(R.id.list_private);
 		listPrivate.setAdapter(matchAdapter);
 		listPrivate.setOnItemClickListener(this);
-		
+
 		networkStateReceiver = new NetworkStateReceiver(this);
 
 
@@ -115,9 +134,9 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 						}
 					}, 0, 5, TimeUnit.SECONDS);
 		}
-		
+
 		networkStateReceiver.addListener(this);
-	    this.registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
+		this.registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
 	}
 
 	@Override
@@ -126,9 +145,9 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 		if(future != null){
 			future.cancel(true);
 		}
-		
+
 		networkStateReceiver.removeListener(this);
-	    this.unregisterReceiver(networkStateReceiver);
+		this.unregisterReceiver(networkStateReceiver);
 	}
 
 	@Override
@@ -172,6 +191,8 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 					slidingMenu.toggle(true);
 				}}, 200);
 
+		} else if(v.getId() == R.id.send_picture){
+			takePhoto();
 		}
 	}
 
@@ -183,6 +204,50 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 				listMessages.setSelection(chatAdapter.getCount() - 1);
 			}
 		});
+	}
+
+	public void takePhoto() {
+        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+        File photo = new File(Environment.getExternalStorageDirectory(),  "Pic.jpg");
+        intent.putExtra(MediaStore.EXTRA_OUTPUT,
+                Uri.fromFile(photo));
+        imageUri = Uri.fromFile(photo);
+        startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+    }
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+			if (resultCode == Activity.RESULT_OK) {
+				getContentResolver().notifyChange(imageUri, null);
+				
+				new Handler(getMainLooper()).post(new Runnable(){
+
+					@Override
+					public void run() {
+						try {
+							Bitmap bitmap = android.provider.MediaStore.Images.Media
+									.getBitmap(getContentResolver(), imageUri);
+							ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+							final Bitmap bitmapScaled = Utils.scaleDown(bitmap, Utils.dpInPixels(PublicChatActivity.this, 400), true);
+							bitmap.recycle();
+							bitmapScaled.compress(Bitmap.CompressFormat.PNG, 100, stream);
+							byte[] byteArray = stream.toByteArray();
+
+							String encoded = Utils.BLINDR_IMAGE_BASE + Base64.encodeToString(byteArray, Base64.DEFAULT);
+							Message message = new Message(Controller.getInstance().getMyself(), encoded, false);
+							chatAdapter.addMessage(message);
+							chatAdapter.notifyDataSetChanged();
+							Server.sendPublicMessage(Controller.getInstance().getCity(), message.getMessage());
+							scrollMyListViewToBottom();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}});
+			}
+		}   
 	}
 
 

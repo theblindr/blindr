@@ -1,5 +1,7 @@
 package com.lesgens.blindr;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,11 +23,17 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -55,6 +63,7 @@ import com.lesgens.blindr.views.SlideshowView;
 
 public class PrivateChatActivity extends Activity implements OnClickListener, EventsListener, NetworkStateReceiverListener, FacebookProfileListener {
 
+	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
 	private Typeface tf;
 	private ImageView sendBt;
 	private PrivateChatAdapter chatAdapter;
@@ -67,6 +76,8 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 	private NetworkStateReceiver networkStateReceiver;
 	private SlideshowView slideshow;
 	private View slideshowSep;
+	private Uri imageUri;
+	private boolean isComingBackFromTakingPhoto;
 
 	public static void show(Context context, String tokenId, String realName){
 		Intent i = new Intent(context, PrivateChatActivity.class);
@@ -83,6 +94,8 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
 		setContentView(R.layout.private_chat);
+		
+		isComingBackFromTakingPhoto = false;
 
 		remoteUser = Controller.getInstance().getUser(getIntent().getStringExtra("tokenId"));
 		TextView fbName = (TextView) findViewById(R.id.fbName);
@@ -95,6 +108,13 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 		findViewById(R.id.back).setOnClickListener(this);
 		
 		findViewById(R.id.photos).setOnClickListener(this);
+		findViewById(R.id.photos).setEnabled(false);
+		
+		if(getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA) == false){
+			findViewById(R.id.send_picture).setVisibility(View.GONE);
+		} else{
+			findViewById(R.id.send_picture).setOnClickListener(this);
+		}
 
 		editText = (EditText) findViewById(R.id.editText);
 		editText.clearFocus();
@@ -124,7 +144,9 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 	@Override
 	public void onResume(){
 		super.onResume();
-		Server.getUserEvents(remoteUser);
+		if(!isComingBackFromTakingPhoto){
+			Server.getUserEvents(remoteUser);
+		}
 		if(scheduler != null){
 			future = scheduler.scheduleAtFixedRate
 					(new Runnable() {
@@ -159,6 +181,56 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 		Server.removeEventsListener(this);
 		slideshow.recycleBitmaps();
 	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+			if (resultCode == Activity.RESULT_OK) {
+				getContentResolver().notifyChange(imageUri, null);
+				
+				new Handler(getMainLooper()).post(new Runnable(){
+
+					@Override
+					public void run() {
+						try {
+							Bitmap bitmap = android.provider.MediaStore.Images.Media
+									.getBitmap(getContentResolver(), imageUri);
+							ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+							final Bitmap bitmapScaled = Utils.scaleDown(bitmap, Utils.dpInPixels(PrivateChatActivity.this, 400), true);
+							bitmap.recycle();
+							bitmapScaled.compress(Bitmap.CompressFormat.PNG, 100, stream);
+							byte[] byteArray = stream.toByteArray();
+
+							String encoded = Utils.BLINDR_IMAGE_BASE + Base64.encodeToString(byteArray, Base64.DEFAULT);
+							Message message = new Message(Controller.getInstance().getMyself(), encoded, false);
+							chatAdapter.addMessage(message);
+							chatAdapter.notifyDataSetChanged();
+							Server.sendPrivateMessage(remoteUser, message.getMessage());
+							editText.setText("");
+							scrollMyListViewToTheBottomNowWeHere();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}});
+				
+
+
+
+			}
+		}   
+	}
+	
+	public void takePhoto() {
+        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+        File photo = new File(Environment.getExternalStorageDirectory(),  "Pic.jpg");
+        intent.putExtra(MediaStore.EXTRA_OUTPUT,
+                Uri.fromFile(photo));
+        imageUri = Uri.fromFile(photo);
+        isComingBackFromTakingPhoto = true;
+        startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+    }
 
 	@Override
 	public void onClick(View v) {
@@ -176,6 +248,8 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 			onBackPressed();
 		} else if(v.getId() == R.id.photos){
 			onPhotoPressed();
+		} else if(v.getId() == R.id.send_picture){
+			takePhoto();
 		}
 	}
 
@@ -318,6 +392,7 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 		protected void onPostExecute(Bitmap result) {
 			Log.i("Async-Example", "onPostExecute Called");
 			slideshow.addPicture(result);
+			findViewById(R.id.photos).setEnabled(true);
 		}
 
 		private Bitmap downloadBitmap(String url) {
