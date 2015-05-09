@@ -50,6 +50,30 @@ android.view.View.OnClickListener {
 		}
 	}
 	
+	public void setYesText(int resourceId){
+		if(findViewById(R.id.btn_yes) != null){
+			((TextView) findViewById(R.id.btn_yes)).setText(resourceId);
+		}
+	}
+	
+	public void setYesText(String text){
+		if(findViewById(R.id.btn_yes) != null){
+			((TextView) findViewById(R.id.btn_yes)).setText(text);
+		}
+	}
+	
+	public void setNoText(int resourceId){
+		if(findViewById(R.id.btn_no) != null){
+			((TextView) findViewById(R.id.btn_no)).setText(resourceId);
+		}
+	}
+	
+	public void setNoText(String text){
+		if(findViewById(R.id.btn_no) != null){
+			((TextView) findViewById(R.id.btn_no)).setText(text);
+		}
+	}
+	
 	public void transformAsOkDialog(){
 		((TextView) findViewById(R.id.btn_yes)).setText(getContext().getString(R.string.ok));
 		findViewById(R.id.btn_no).setVisibility(View.GONE);

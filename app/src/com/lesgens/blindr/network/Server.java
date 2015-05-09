@@ -17,6 +17,7 @@ import android.util.Log;
 
 import com.checkin.avatargenerator.AvatarGenerator;
 import com.lesgens.blindr.controllers.Controller;
+import com.lesgens.blindr.db.DatabaseHelper;
 import com.lesgens.blindr.listeners.EventsListener;
 import com.lesgens.blindr.listeners.FacebookProfileListener;
 import com.lesgens.blindr.listeners.UserAuthenticatedListener;
@@ -32,6 +33,7 @@ public class Server {
 	private static List<EventsListener> eventsListeners = new ArrayList<EventsListener>();
 	private static List<FacebookProfileListener> profileListeners = new ArrayList<FacebookProfileListener>();
 	private static String address = "https://blindr-backend.herokuapp.com/";
+	private static String TAG = "Blindr_Server";
 	
 	public static void connect(String authenticationToken) {
 		AsyncTask<String, Void, String> request = new AsyncTask<String, Void, String>() {
@@ -39,10 +41,10 @@ public class Server {
 			@Override
 			protected String doInBackground(String... arg0) {
 				String finalAddress = address + "auth";
-				Log.i("SERVER_INFOS", "auth address: " + finalAddress);
+				Log.i(TAG, "auth address: " + finalAddress);
 				List<NameValuePair> data = new ArrayList<NameValuePair>();
 				data.add(new BasicNameValuePair("fb_token", arg0[0]));
-				Log.i("SERVER_INFOS", "fb_token: " + arg0[0]);
+				Log.i(TAG, "fb_token: " + arg0[0]);
 				HTTPRequest request = new HTTPRequest(finalAddress, RequestType.POST, data);
 				return request.getOutput();
 			}
@@ -51,19 +53,19 @@ public class Server {
 			protected void onPostExecute(String result) {
 				super.onPostExecute(result);
 				String userId = "";
-				Log.i("SERVER_INFOS", "Auth response's json: "+ result);
+				Log.i(TAG, "Auth response's json: "+ result);
 				try {
 					userId = readUserToken(new StringReader(result));
-					Log.i("SERVER_INFOS", "Auth response's userId: "+ userId);
+					Log.i(TAG, "Auth response's userId: "+ userId);
 					Controller.getInstance().setMyOwnUser(new User(null, AvatarGenerator.generate(Controller.getInstance().getDimensionAvatar(), Controller.getInstance().getDimensionAvatar()), userId));
 					for(UserAuthenticatedListener listener: userAuthenticatedListeners) {
 						listener.onUserAuthenticated();
 					}
 				} catch (IOException e) {
-					Log.i("SERVER_INFOS", "Error while authenticating.");
+					Log.i(TAG, "Error while authenticating.");
 					e.printStackTrace();
 				} catch (Exception e) {
-					Log.i("SERVER_INFOS", "Something went wrong while authenticating.");
+					Log.i(TAG, "Something went wrong while authenticating.");
 					e.printStackTrace();
 				}
 			}
@@ -79,7 +81,7 @@ public class Server {
 			@Override
 			protected String doInBackground(String... arg0) {
 				String finalAddress = address + "events";
-				Log.i("SERVER_INOFS", "Events address: " + finalAddress);
+				Log.i(TAG, "Events address: " + finalAddress);
 				Log.i("SERVER+INFOS", "Events city: " + arg0[1]);
 				
 				List<NameValuePair> data = new ArrayList<NameValuePair>();
@@ -96,17 +98,17 @@ public class Server {
 			protected void onPostExecute(String result) {
 				super.onPostExecute(result);
 				List<Event> events = null;
-				Log.i("SERVER_INFOS", "Events response's json: "+ result);
+				Log.i(TAG, "Events response's json: "+ result);
 				try {
 					events = readEvents(new StringReader(result));
 					for(EventsListener listener:eventsListeners){
 						listener.onEventsReceived(events);
 					}
 				} catch (IOException e) {
-					Log.i("SERVER_INOFS", "Error while receiving events: ");
+					Log.i(TAG, "Error while receiving events: ");
 					e.printStackTrace();
 				} catch (Exception e) {
-					Log.i("SERVER_INFOS", "Something went wrong when fetching the events.");
+					Log.i(TAG, "Something went wrong when fetching the events.");
 					e.printStackTrace();
 				}
 			}
@@ -122,7 +124,7 @@ public class Server {
 			@Override
 			protected String doInBackground(String... arg0) {
 				String finalAddress = address + "events/message";
-				Log.i("SERVER_INOFS", "Send private message address: " + finalAddress);
+				Log.i(TAG, "Send private message address: " + finalAddress);
 				
 				List<NameValuePair> data = new ArrayList<NameValuePair>();
 				data.add(new BasicNameValuePair("dst_user", arg0[1]));
@@ -138,7 +140,7 @@ public class Server {
 			@Override
 			protected void onPostExecute(String result) {
 				super.onPostExecute(result);
-				Log.i("SERVER_INFOS", "Sent message's response: "+ result);
+				Log.i(TAG, "Sent message's response: "+ result);
 			}
 			
 		};
@@ -151,7 +153,7 @@ public class Server {
 			@Override
 			protected String doInBackground(String... arg0) {
 				String finalAddress = address + "events/message";
-				Log.i("SERVER_INOFS", "Send public message address: " + finalAddress);
+				Log.i(TAG, "Send public message address: " + finalAddress);
 				
 				List<NameValuePair> data = new ArrayList<NameValuePair>();
 				data.add(new BasicNameValuePair("dst_city", arg0[1]));
@@ -167,7 +169,7 @@ public class Server {
 			@Override
 			protected void onPostExecute(String result) {
 				super.onPostExecute(result);
-				Log.i("SERVER_INFOS", "Sent message's response: "+ result);
+				Log.i(TAG, "Sent message's response: "+ result);
 			}
 			
 		};
@@ -180,7 +182,7 @@ public class Server {
 			@Override
 			protected String doInBackground(String... arg0) {
 				String finalAddress = address + "events/like";
-				Log.i("SERVER_INOFS", "Like address: " + finalAddress);
+				Log.i(TAG, "Like address: " + finalAddress);
 				
 				List<NameValuePair> data = new ArrayList<NameValuePair>();
 				data.add(new BasicNameValuePair("dst_user", arg0[1]));
@@ -195,7 +197,7 @@ public class Server {
 			@Override
 			protected void onPostExecute(String result) {
 				super.onPostExecute(result);
-				Log.i("SERVER_INFOS", "Like's response: "+ result);
+				Log.i(TAG, "Like's response: "+ result);
 			}
 			
 		};
@@ -211,7 +213,7 @@ public class Server {
 			@Override
 			protected String doInBackground(String... arg0) {
 				String finalAddress = address + "events/dislike";
-				Log.i("SERVER_INOFS", "Like address: " + finalAddress);
+				Log.i(TAG, "Like address: " + finalAddress);
 				
 				List<NameValuePair> data = new ArrayList<NameValuePair>();
 				data.add(new BasicNameValuePair("dst_user", arg0[1]));
@@ -226,7 +228,7 @@ public class Server {
 			@Override
 			protected void onPostExecute(String result) {
 				super.onPostExecute(result);
-				Log.i("SERVER_INFOS", "Dislike response: "+ result);
+				Log.i(TAG, "Dislike response: "+ result);
 			}
 			
 		};
@@ -240,7 +242,7 @@ public class Server {
 			@Override
 			protected String doInBackground(String... arg0) {
 				String finalAddress = address + "events/like";
-				Log.i("SERVER_INOFS", "Like address: " + finalAddress);
+				Log.i(TAG, "Like address: " + finalAddress);
 				
 				List<NameValuePair> headers = new ArrayList<NameValuePair>();
 				headers.add(new BasicNameValuePair("X-User-Token", arg0[0]));
@@ -253,16 +255,16 @@ public class Server {
 			protected void onPostExecute(String result) {
 				super.onPostExecute(result);
 				try {
-					Log.i("SERVER_INFOS", "Matches's response: "+ result);
+					Log.i(TAG, "Matches's response: "+ result);
 					List<Match> matches = readMatches(new StringReader(result));
 					for(EventsListener listener: eventsListeners) {
 						listener.onOldMatchesReceives(matches);
 					}
 				} catch (IOException e) {
-					Log.i("SERVER_INFOS", "Something went wrong when fetching the old matches.");
+					Log.i(TAG, "Something went wrong when fetching the old matches.");
 					e.printStackTrace();
 				} catch (Exception e) {
-					Log.i("SERVER_INFOS", "Something went wrong when fetching the old matches.");
+					Log.i(TAG, "Something went wrong when fetching the old matches.");
 					e.printStackTrace();
 				}
 			}
@@ -277,10 +279,13 @@ public class Server {
 			@Override
 			protected String doInBackground(String... arg0) {
 				String finalAddress = address + "events/" + arg0[1];
-				Log.i("SERVER_INOFS", "Events avec user address: " + finalAddress);
+				Log.i(TAG, "Events avec user address: " + finalAddress);
 				
 				List<NameValuePair> headers = new ArrayList<NameValuePair>();
 				headers.add(new BasicNameValuePair("X-User-Token", arg0[0]));
+				long lastTime = DatabaseHelper.getInstance().getLastMessageFetched(arg0[1]);
+				Log.i(TAG, "Last message fetched=" + lastTime);
+				headers.add(new BasicNameValuePair("since", String.valueOf(lastTime)));
 				
 				HTTPRequest request = new HTTPRequest(finalAddress, RequestType.GET, null, headers);
 				return request.getOutput();
@@ -290,16 +295,16 @@ public class Server {
 			protected void onPostExecute(String result) {
 				super.onPostExecute(result);
 				try {
-					Log.i("SERVER_INFOS", "User events response: "+ result);
+					Log.i(TAG, "User events response: "+ result);
 					List<Event> events = readEvents(new StringReader(result));
 					for(EventsListener listener: eventsListeners) {
 						listener.onUserHistoryReceived(events);
 					}
 				} catch (IOException e) {
-					Log.i("SERVER_INFOS", "Something went wrong when fetching the old matches.");
+					Log.i(TAG, "Something went wrong when fetching the old matches.");
 					e.printStackTrace();
 				} catch (Exception e) {
-					Log.i("SERVER_INFOS", "Something went wrong when fetching the old matches.");
+					Log.i(TAG, "Something went wrong when fetching the old matches.");
 					e.printStackTrace();
 				}
 			}
@@ -307,20 +312,21 @@ public class Server {
 		request.execute(Controller.getInstance().getMyself().getId(), user.getId());
 	}
 	
-	public static void getUserFacebookInfos(User user) {
+	public static void getUserFacebookPictureSlideshow(User user) {
 		// get les events avec un user en particulier
 		AsyncTask<String, Void, String> request = new AsyncTask<String, Void, String>() {
 
 			@Override
 			protected String doInBackground(String... arg0) {
 				String finalAddress = address + "events/pictures";
-				Log.i("SERVER_INOFS", "Pictures avec user address: " + finalAddress);
+				Log.i(TAG, "Pictures avec user address: " + finalAddress);
 				
 				List<NameValuePair> headers = new ArrayList<NameValuePair>();
 				headers.add(new BasicNameValuePair("X-User-Token", arg0[0]));
 				
 				List<NameValuePair> data = new ArrayList<NameValuePair>();
 				data.add(new BasicNameValuePair("dst_id", arg0[1]));
+				data.add(new BasicNameValuePair("typeReq", "slideshow"));
 				
 				HTTPRequest request = new HTTPRequest(finalAddress, RequestType.GET, data, headers);
 				return request.getOutput();
@@ -330,7 +336,56 @@ public class Server {
 			protected void onPostExecute(String result) {
 				super.onPostExecute(result);
 				try {
-					Log.i("SERVER_INFOS", "User pictures response: "+ result);
+					Log.i(TAG, "User pictures response: "+ result);
+					List<String> pictures = new ArrayList<String>();
+ 					StringReader in = new StringReader(result);
+					JsonReader reader = new JsonReader(in);
+					reader.beginArray();
+					while(reader.hasNext()){
+						pictures.add(reader.nextString());
+					}
+					reader.endArray();
+					reader.close();
+					in.close();
+					for(FacebookProfileListener listener: profileListeners) {
+						listener.onSlideshowPicturesReceived(pictures);
+					}
+				} catch (IOException e) {
+					Log.i(TAG, "Something went wrong when fetching the pictures.");
+					e.printStackTrace();
+				} catch (Exception e) {
+					Log.i(TAG, "Something went wrong when fetching the pictures.");
+					e.printStackTrace();
+				}
+			}
+		};
+		request.execute(Controller.getInstance().getMyself().getId(), user.getId());
+	}
+	
+	public static void getUserFacebookPictures(User user) {
+		// get les events avec un user en particulier
+		AsyncTask<String, Void, String> request = new AsyncTask<String, Void, String>() {
+
+			@Override
+			protected String doInBackground(String... arg0) {
+				String finalAddress = address + "events/pictures";
+				Log.i(TAG, "Pictures avec user address: " + finalAddress);
+				
+				List<NameValuePair> headers = new ArrayList<NameValuePair>();
+				headers.add(new BasicNameValuePair("X-User-Token", arg0[0]));
+				
+				List<NameValuePair> data = new ArrayList<NameValuePair>();
+				data.add(new BasicNameValuePair("typeReq", "all"));
+				
+				HTTPRequest request = new HTTPRequest(finalAddress, RequestType.GET, data, headers);
+				return request.getOutput();
+			}
+
+			@Override
+			protected void onPostExecute(String result) {
+				super.onPostExecute(result);
+				try {
+					Log.i(TAG, "User pictures response: "+ result);
 					List<String> pictures = new ArrayList<String>();
  					StringReader in = new StringReader(result);
 					JsonReader reader = new JsonReader(in);
@@ -345,10 +400,10 @@ public class Server {
 						listener.onProfilePicturesReceived(pictures);
 					}
 				} catch (IOException e) {
-					Log.i("SERVER_INFOS", "Something went wrong when fetching the pictures.");
+					Log.i(TAG, "Something went wrong when fetching the pictures.");
 					e.printStackTrace();
 				} catch (Exception e) {
-					Log.i("SERVER_INFOS", "Something went wrong when fetching the pictures.");
+					Log.i(TAG, "Something went wrong when fetching the pictures.");
 					e.printStackTrace();
 				}
 			}

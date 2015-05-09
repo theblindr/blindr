@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.lesgens.blindr.ImageViewerActivity;
 import com.lesgens.blindr.R;
 
 public class SlideshowView extends RelativeLayout implements OnClickListener {
@@ -141,6 +142,7 @@ public class SlideshowView extends RelativeLayout implements OnClickListener {
 	public void onClick(View v) {
 		if(v instanceof ImageView){
 			select((Integer) v.getTag());
+			ImageViewerActivity.show(getContext(), getSelectedImage());
 		}
 	}
 

@@ -13,10 +13,19 @@
     <string name="lost_connectivity">You are currently disconnected</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="title_activity_private_chat">Private Chat</string>
     <string name="title_activity_slideshow">SlideshowActivity</string>
     <string name="authenticating">Authenticating...</string>
     <string name="title_activity_image_viewer">ImageViewerActivity</string>
+    <string name="women">Women</string>
+    <string name="men">Men</string>
+    <string name="other">Other</string>
+    <string name="interested_in">What are you interested in?</string>
+    <string name="retry">Retry</string>
+    <string name="close">Close</string>
+    <string name="pick_a_room">Pick a room</string>
+    <string name="trending">Trending right now</string>
+    <string name="reconnect_to_last">Reconnect to %s</string>
 
 </resources>

@@ -57,6 +57,7 @@ public class PrivateChatAdapter extends ArrayAdapter<Message> implements StickyL
 		public TextView message;
 		public TextView time;
 		public ImageView picture;
+		public TextView timePicture;
 	}
 
 	static class HeaderViewHolder {
@@ -81,6 +82,7 @@ public class PrivateChatAdapter extends ArrayAdapter<Message> implements StickyL
 			ViewHolder viewHolder = new ViewHolder();
 			viewHolder.message = (TextView) rowView.findViewById(R.id.message);
 			viewHolder.time = (TextView) rowView.findViewById(R.id.time);
+			viewHolder.timePicture = (TextView) rowView.findViewById(R.id.time_picture);
 			viewHolder.picture = (ImageView) rowView.findViewById(R.id.picture);
 			rowView.setTag(viewHolder);
 		} else{
@@ -89,6 +91,7 @@ public class PrivateChatAdapter extends ArrayAdapter<Message> implements StickyL
 			ViewHolder viewHolder = new ViewHolder();
 			viewHolder.message = (TextView) rowView.findViewById(R.id.message);
 			viewHolder.time = (TextView) rowView.findViewById(R.id.time);
+			viewHolder.timePicture = (TextView) rowView.findViewById(R.id.time_picture);
 			viewHolder.picture = (ImageView) rowView.findViewById(R.id.picture);
 
 			rowView.setTag(viewHolder);
@@ -100,30 +103,45 @@ public class PrivateChatAdapter extends ArrayAdapter<Message> implements StickyL
 
 		if(message.getMessage().startsWith(Utils.BLINDR_IMAGE_BASE)){
 			holder.message.setVisibility(View.GONE);
-			holder.time.setVisibility(View.GONE);
 			holder.picture.setVisibility(View.VISIBLE);
+			holder.time.setVisibility(View.GONE);
+			holder.timePicture.setVisibility(View.VISIBLE);
+			holder.timePicture.setText(sdfMessage.format(message.getTimestamp()));
 			String encoded = message.getMessage().substring(Utils.BLINDR_IMAGE_BASE.length());
-			byte[] bytes = Base64.decode(encoded, Base64.DEFAULT);
-			Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-			holder.picture.setImageBitmap(bitmap);
-			holder.picture.setOnClickListener(this);
+			byte[] bytes;
+			try{
+				bytes = Base64.decode(encoded, Base64.DEFAULT);
+				Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+				holder.picture.setImageBitmap(bitmap);
+				holder.picture.setOnClickListener(this);
+			} catch(Exception e){
+				holder.picture.setVisibility(View.GONE);
+				holder.message.setVisibility(View.VISIBLE);
+				holder.message.setText("Failed to decode Base64, probably byte array");
+			}
+			
 		} else{
 			holder.message.setVisibility(View.VISIBLE);
-			holder.time.setVisibility(View.VISIBLE);
 			holder.message.setText(message.getMessage());
+			holder.time.setVisibility(View.VISIBLE);
+			holder.timePicture.setVisibility(View.GONE);
+			holder.picture.setVisibility(View.GONE);
 			holder.time.setText(sdfMessage.format(message.getTimestamp()));
 		}
 
 		return rowView;
 	}
 
-	public void addMessage(Message message){
+	public boolean addMessage(Message message){
 		if(!messages.isEmpty()){
 			if(!messages.contains(message)){
 				super.add(message);
+				return true;
 			}
+			return false;
 		} else{
 			super.add(message);
+			return true;
 		}
 	}
 

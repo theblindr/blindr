@@ -25,5 +25,17 @@ public class Utils {
 	            height, filter);
 	    return newBitmap;
 	}
+	
+	public static byte[] getByteArrayFromString(String str){
+		String[] splitted = str.split(",");
+		
+		byte[] byteArray = new byte[splitted.length];
+		
+		for(int i = 0; i < splitted.length; i++){
+			byteArray[i] = Byte.valueOf(splitted[i]);
+		}
+		
+		return byteArray;
+	}
 
 }

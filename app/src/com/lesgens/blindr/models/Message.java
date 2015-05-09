@@ -20,6 +20,10 @@ public class Message extends Event{
 	public Message(User user, String message, boolean isIncoming){
 		this(UUID.randomUUID(), new Timestamp(System.currentTimeMillis()), null, user, message, null, Gender.Custom, isIncoming, null);
 	}
+	
+	public Message(UUID id, Timestamp timestamp, User user, String realName, String fakeName, String message, boolean isIncoming){
+		this(id, timestamp, null, user, message, fakeName, Gender.Custom, isIncoming, realName);
+	}
 
 	public Message(UUID id, Timestamp timestamp, IDestination destination, User user, String message, String fakeName, Gender gender, boolean isIncoming, String realName) {
 		super(id, timestamp, destination, user, realName, fakeName);

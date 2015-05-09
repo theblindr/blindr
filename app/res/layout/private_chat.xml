@@ -30,10 +30,10 @@
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_centerVertical="true"
-            android:scaleType="fitCenter"
             android:layout_marginLeft="10dp"
             android:layout_toRightOf="@id/back"
-            android:background="@drawable/circle_white_sel" />
+            android:background="@drawable/circle_white_sel"
+            android:scaleType="fitCenter" />
 
         <TextView
             android:id="@+id/fbName"
@@ -75,6 +75,7 @@
         android:layout_height="200dp"
         android:layout_below="@id/connection_problem"
         android:layout_centerHorizontal="true"
+        android:background="@color/transparent"
         android:visibility="gone" />
 
     <se.emilsjolander.stickylistheaders.StickyListHeadersListView
@@ -91,7 +92,6 @@
         android:dividerHeight="10dp"
         android:listSelector="@android:color/transparent"
         android:overScrollMode="never"
-        android:paddingBottom="10dp"
         android:scrollbars="none"
         android:stackFromBottom="true" />
 
@@ -124,7 +124,7 @@
             android:inputType="textCapSentences"
             android:paddingLeft="10dp"
             android:paddingRight="10dp" />
-        
+
         <ImageView
             android:id="@+id/send_picture"
             android:layout_width="40dp"

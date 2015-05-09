@@ -231,9 +231,9 @@ public class PublicChatActivity extends Activity implements OnClickListener, Eve
 									.getBitmap(getContentResolver(), imageUri);
 							ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
-							final Bitmap bitmapScaled = Utils.scaleDown(bitmap, Utils.dpInPixels(PublicChatActivity.this, 400), true);
+							final Bitmap bitmapScaled = Utils.scaleDown(bitmap, Utils.dpInPixels(PublicChatActivity.this, 250), true);
 							bitmap.recycle();
-							bitmapScaled.compress(Bitmap.CompressFormat.PNG, 100, stream);
+							bitmapScaled.compress(Bitmap.CompressFormat.JPEG, 100, stream);
 							byte[] byteArray = stream.toByteArray();
 
 							String encoded = Utils.BLINDR_IMAGE_BASE + Base64.encodeToString(byteArray, Base64.DEFAULT);
