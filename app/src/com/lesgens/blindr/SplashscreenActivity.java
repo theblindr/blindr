@@ -169,4 +169,38 @@ public class SplashscreenActivity extends Activity implements
 		finish();
 	}
 
+	@Override
+	public void onUserNetworkErrorAuthentication() {
+		CustomYesNoDialog dialog = new CustomYesNoDialog(this){
+
+			@Override
+			public void onPositiveClick() {
+				super.onPositiveClick();
+				finish();
+			}
+
+		};
+
+		dialog.show();
+		dialog.transformAsOkDialog();
+		dialog.setDialogText(R.string.no_network);
+	}
+
+	@Override
+	public void onUserServerErrorAuthentication() {
+		CustomYesNoDialog dialog = new CustomYesNoDialog(this){
+
+			@Override
+			public void onPositiveClick() {
+				super.onPositiveClick();
+				finish();
+			}
+
+		};
+
+		dialog.show();
+		dialog.transformAsOkDialog();
+		dialog.setDialogText(R.string.server_error);
+	}
+
 }

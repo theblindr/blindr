@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_color" >
+
+    <TextView
+        android:id="@+id/splash_text_picture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="80dp"
+        android:text="@string/app_name"
+        android:textColor="@color/white"
+        android:textSize="40sp" />
+
+    <ImageView
+        android:id="@+id/avatar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/splash_text_picture"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/avatar_bg" />
+
+    <TextView
+        android:id="@+id/pictures_to_use"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/avatar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:text="@string/pictures_to_use"
+        android:textColor="@color/white"
+        android:textSize="22sp" />
+
+    <com.lesgens.blindr.views.SlideshowView
+        android:id="@+id/slideshow"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        android:layout_below="@id/pictures_to_use"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:background="@color/transparent" />
+
+    <Button
+        android:id="@+id/btn_add"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/slideshow"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/white_bg_sel"
+        android:clickable="true"
+        android:text="@string/add_picture"
+        android:textColor="@color/main_color"
+        android:textStyle="bold" />
+
+</RelativeLayout>

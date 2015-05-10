@@ -61,12 +61,17 @@ public class Server {
 					for(UserAuthenticatedListener listener: userAuthenticatedListeners) {
 						listener.onUserAuthenticated();
 					}
-				} catch (IOException e) {
-					Log.i(TAG, "Error while authenticating.");
-					e.printStackTrace();
+				} catch(IOException ioe){
+					ioe.printStackTrace();
+					for(UserAuthenticatedListener listener: userAuthenticatedListeners) {
+						listener.onUserServerErrorAuthentication();
+					}
 				} catch (Exception e) {
 					Log.i(TAG, "Something went wrong while authenticating.");
 					e.printStackTrace();
+					for(UserAuthenticatedListener listener: userAuthenticatedListeners) {
+						listener.onUserNetworkErrorAuthentication();
+					}
 				}
 			}
 			
@@ -318,7 +323,7 @@ public class Server {
 
 			@Override
 			protected String doInBackground(String... arg0) {
-				String finalAddress = address + "events/pictures";
+				String finalAddress = address + "pictures";
 				Log.i(TAG, "Pictures avec user address: " + finalAddress);
 				
 				List<NameValuePair> headers = new ArrayList<NameValuePair>();
@@ -368,7 +373,7 @@ public class Server {
 
 			@Override
 			protected String doInBackground(String... arg0) {
-				String finalAddress = address + "events/pictures";
+				String finalAddress = address + "pictures";
 				Log.i(TAG, "Pictures avec user address: " + finalAddress);
 				
 				List<NameValuePair> headers = new ArrayList<NameValuePair>();

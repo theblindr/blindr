@@ -6,7 +6,7 @@
     android:background="@color/main_color" >
 
     <TextView
-        android:id="@+id/splash_text"
+        android:id="@+id/splash_text_interested_in"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -18,7 +18,7 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/splash_text"
+        android:layout_below="@id/splash_text_interested_in"
         android:layout_centerInParent="true"
         android:layout_marginTop="20dp"
         android:orientation="vertical" >
@@ -28,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:src="@drawable/com_facebook_button_like" />
+            android:src="@drawable/avatar_bg" />
 
         <TextView
             android:id="@+id/interested_in"
@@ -37,7 +37,7 @@
             android:layout_marginTop="20dp"
             android:text="@string/interested_in"
             android:textColor="@color/white"
-            android:textSize="26sp" />
+            android:textSize="22sp" />
 
         <CheckBox
             android:id="@+id/checkBox_men"
@@ -47,7 +47,7 @@
             android:button="@drawable/white_checkbox"
             android:text="@string/women"
             android:textColor="@color/white"
-            android:textSize="24sp" />
+            android:textSize="20sp" />
 
         <CheckBox
             android:id="@+id/checkBox_women"
@@ -56,7 +56,7 @@
             android:button="@drawable/white_checkbox"
             android:text="@string/men"
             android:textColor="@color/white"
-            android:textSize="24sp" />
+            android:textSize="20sp" />
 
         <CheckBox
             android:id="@+id/checkBox_other"
@@ -65,7 +65,7 @@
             android:button="@drawable/white_checkbox"
             android:text="@string/other"
             android:textColor="@color/white"
-            android:textSize="24sp" />
+            android:textSize="20sp" />
     </LinearLayout>
 
 </RelativeLayout>

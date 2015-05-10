@@ -29,6 +29,9 @@ android.view.View.OnClickListener {
 		
 		setContentView(R.layout.dialog_yes_no);
 		
+		setCancelable(false);
+		setCanceledOnTouchOutside(false);
+		
 		yes = (Button) findViewById(R.id.btn_yes);
 		no = (Button) findViewById(R.id.btn_no);
 		

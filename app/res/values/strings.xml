@@ -11,6 +11,7 @@
     <string name="location_not_found">Your location has not been found.\nPlease try again.</string>
     <string name="no_network">No network is available.\nPlease try again later.</string>
     <string name="lost_connectivity">You are currently disconnected</string>
+    <string name="server_error">There was an error during authentification.\nPlease try again later.</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="ok">OK</string>
@@ -22,10 +23,16 @@
     <string name="men">Men</string>
     <string name="other">Other</string>
     <string name="interested_in">What are you interested in?</string>
+    <string name="pictures_to_use">Choose the pictures you want\nto show in private</string>
     <string name="retry">Retry</string>
     <string name="close">Close</string>
     <string name="pick_a_room">Pick a room</string>
     <string name="trending">Trending right now</string>
     <string name="reconnect_to_last">Reconnect to %s</string>
+    <string name="activity_title">Facebook Albums</string>
+    <string name="photos">Photos</string>
+    <string name="photo">Photo</string>
+    <string name="use_photo">Do you want to use this picture?</string>
+    <string name="add_picture">Add a picture</string>
 
 </resources>
