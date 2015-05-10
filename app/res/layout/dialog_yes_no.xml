@@ -30,23 +30,23 @@
             android:orientation="horizontal" >
 
             <Button
-                android:id="@+id/btn_no"
+                android:id="@+id/btn_yes"
                 android:layout_width="100dp"
                 android:layout_height="30dp"
                 android:background="@drawable/white_bg_sel"
                 android:clickable="true"
-                android:text="@string/no"
+                android:text="@string/yes"
                 android:textColor="@color/main_color"
                 android:textStyle="bold" />
 
             <Button
-                android:id="@+id/btn_yes"
+                android:id="@+id/btn_no"
                 android:layout_width="100dp"
                 android:layout_height="30dp"
                 android:layout_marginLeft="5dp"
                 android:background="@drawable/white_bg_sel"
                 android:clickable="true"
-                android:text="@string/yes"
+                android:text="@string/no"
                 android:textColor="@color/main_color"
                 android:textStyle="bold" />
         </LinearLayout>

@@ -36,7 +36,6 @@ import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.grio.fbphotopicker.FBPhotoPickerActivity;
 import com.lesgens.blindr.adapters.TrendingAdapter;
 import com.lesgens.blindr.controllers.Controller;
 import com.lesgens.blindr.controllers.PreferencesController;
@@ -51,7 +50,7 @@ public class ChooseRoomActivity extends FragmentActivity implements OnClickListe
 	private Handler handler;
 	private ListView trendingList;
 	private TrendingAdapter trendingAdapter;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -59,18 +58,18 @@ public class ChooseRoomActivity extends FragmentActivity implements OnClickListe
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 
 		setContentView(R.layout.choose_map);
-		
+
 		handler = new Handler(getMainLooper());
 
 		Typeface tf = Typeface.createFromAsset(getAssets(), "fonts/Raleway_Thin.otf");
 		((TextView) findViewById(R.id.textViewTop)).setTypeface(tf);
 		findViewById(R.id.lastUsedAddress).setOnClickListener(this);
-		
+
 		trendingList = (ListView) findViewById(R.id.trending_list);
 		trendingList.setOnItemClickListener(this);
 
 		((ImageView) findViewById(R.id.avatar)).setImageBitmap(Controller.getInstance().getMyself().getAvatar());
-		((TextView) findViewById(R.id.fake_name)).setText("Angry Plot");
+		((TextView) findViewById(R.id.fake_name)).setText(Controller.getInstance().getMyself().getName());
 
 		mLocationRequest = new LocationRequest();
 		mLocationRequest.setInterval(2000);
@@ -102,10 +101,10 @@ public class ChooseRoomActivity extends FragmentActivity implements OnClickListe
 		} else{
 			findViewById(R.id.lastUsedAddress).setVisibility(View.GONE);
 		}
-		
+
 		refreshList();
 	}
-	
+
 	public void refreshList(){
 		//Fetch from server
 		ArrayList<Trend> trends = new ArrayList<Trend>();
@@ -191,11 +190,13 @@ public class ChooseRoomActivity extends FragmentActivity implements OnClickListe
 	public void onConnected(Bundle connectionHint) {
 		mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
 				mGoogleApiClient);
-		CameraPosition cameraPosition = new CameraPosition.Builder()
-		.target(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()))      // Sets the center of the map to Mountain View
-		.zoom(15)                   // Sets the zoom
-		.build();                   // Creates a CameraPosition from the builder
-		map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+		if(mLastLocation != null){
+			CameraPosition cameraPosition = new CameraPosition.Builder()
+			.target(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()))      // Sets the center of the map to Mountain View
+			.zoom(15)                   // Sets the zoom
+			.build();                   // Creates a CameraPosition from the builder
+			map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+		}
 	}
 
 	protected synchronized void buildGoogleApiClient() {

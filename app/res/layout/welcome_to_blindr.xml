@@ -36,50 +36,17 @@
                 android:src="@drawable/avatar_bg" />
 
             <TextView
-                android:id="@+id/pictures_to_use"
+                android:id="@+id/blindr_desc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/avatar"
-                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:layout_marginTop="20dp"
                 android:gravity="center"
-                android:text="@string/pictures_to_use"
+                android:text="@string/blindr_desc"
                 android:textColor="@color/white"
-                android:textSize="22sp" />
-
-            <TextView
-                android:id="@+id/empty_text"
-                android:layout_width="match_parent"
-                android:layout_height="180dp"
-                android:layout_below="@id/pictures_to_use"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="20dp"
-                android:background="#20000000"
-                android:gravity="center"
-                android:text="@string/add_pictures"
-                android:textColor="@color/white" />
-
-            <com.lesgens.blindr.views.SlideshowView
-                android:id="@+id/slideshow"
-                android:layout_width="wrap_content"
-                android:layout_height="180dp"
-                android:layout_below="@id/pictures_to_use"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="20dp"
-                android:background="@color/transparent" />
-
-            <Button
-                android:id="@+id/btn_add"
-                android:layout_width="150dp"
-                android:layout_height="40dp"
-                android:layout_below="@id/slideshow"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="20dp"
-                android:background="@drawable/white_bg_sel"
-                android:clickable="true"
-                android:text="@string/add_picture"
-                android:textColor="@color/main_color"
-                android:textStyle="bold" />
+                android:textSize="20sp" />
         </RelativeLayout>
     </ScrollView>
 
@@ -88,16 +55,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true" >
-
-        <TextView
-            android:id="@+id/back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/gen_sel"
-            android:padding="15dp"
-            android:text="@string/back"
-            android:textColor="@color/white"
-            android:textSize="22sp" />
 
         <TextView
             android:id="@+id/next"

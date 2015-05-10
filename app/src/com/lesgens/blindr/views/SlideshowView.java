@@ -49,7 +49,7 @@ public class SlideshowView extends RelativeLayout implements OnClickListener {
 
 	public void addPicture(Bitmap bitmap){
 		mPicturesContainer.addView(createImageViewFromBitmap(bitmap));
-		mDotsContainer.addView(createDot());
+		//mDotsContainer.addView(createDot());
 		mImages.add(bitmap);
 		invalidate();
 		requestLayout();
@@ -104,7 +104,7 @@ public class SlideshowView extends RelativeLayout implements OnClickListener {
 				((TextView) mDotsContainer.getChildAt(i)).setTextColor(mUnselectedColor);
 			}
 			mPicturesContainer.getChildAt(item).setBackgroundColor(mSelectedColor);
-			((TextView) mDotsContainer.getChildAt(item)).setTextColor(mSelectedColor);
+			//((TextView) mDotsContainer.getChildAt(item)).setTextColor(mSelectedColor);
 			mSelectedItem = item;
 		}
 	}

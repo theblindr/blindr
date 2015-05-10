@@ -20,6 +20,7 @@ import com.facebook.UiLifecycleHelper;
 import com.facebook.widget.LoginButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.lesgens.blindr.controllers.Controller;
+import com.lesgens.blindr.controllers.PreferencesController;
 import com.lesgens.blindr.db.DatabaseHelper;
 import com.lesgens.blindr.listeners.UserAuthenticatedListener;
 import com.lesgens.blindr.network.Server;
@@ -27,7 +28,7 @@ import com.lesgens.blindr.views.CustomYesNoDialog;
 import com.todddavies.components.progressbar.ProgressWheel;
 
 public class SplashscreenActivity extends Activity implements
- UserAuthenticatedListener {
+UserAuthenticatedListener {
 	private GoogleApiClient mGoogleApiClient;
 	private static final String[] PERMISSIONS = {"public_profile", "user_photos"};
 	private boolean mConnected = false;
@@ -39,7 +40,7 @@ public class SplashscreenActivity extends Activity implements
 			onSessionStateChange(session, state, exception);
 		}
 	}; 
-	
+
 	public static void show(Context context){
 		Intent i = new Intent(context, SplashscreenActivity.class);
 		context.startActivity(i);
@@ -71,7 +72,7 @@ public class SplashscreenActivity extends Activity implements
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
 		setContentView(R.layout.splashscreen);
-		
+
 		DatabaseHelper.init(this);
 
 		TextView tv = (TextView) findViewById(R.id.splash_text);
@@ -94,7 +95,7 @@ public class SplashscreenActivity extends Activity implements
 			dialog.transformAsOkDialog();
 			dialog.setDialogText(R.string.no_network);
 		}
-		
+
 		Server.addUserAuthenticatedListener(this);
 		LoginButton authButton = (LoginButton)findViewById(R.id.authButton);
 		authButton.setReadPermissions(PERMISSIONS);
@@ -105,16 +106,16 @@ public class SplashscreenActivity extends Activity implements
 	public void onDestroy(){
 		super.onDestroy();
 		uiHelper.onDestroy();
-		
+
 		if(mGoogleApiClient != null){
 			if(mGoogleApiClient.isConnected() || mGoogleApiClient.isConnecting()){
 				mGoogleApiClient.disconnect();
 			}
 		}
-		
+
 		Server.removeUserAuthenticatedListener(this);
 	}
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -152,7 +153,11 @@ public class SplashscreenActivity extends Activity implements
 	@Override
 	public void onUserAuthenticated() {
 		Log.i("SplashscreenActivity", "onUserAuthenticated");
-		goToChooseRoom();
+		if(PreferencesController.isFirstUse(this)){
+			goToFirstTimeExperience();
+		} else{
+			goToChooseRoom();
+		}
 	}
 
 	private boolean isNetworkAvailable() {
@@ -160,6 +165,13 @@ public class SplashscreenActivity extends Activity implements
 		= (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 		return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+	}
+	
+	public void goToFirstTimeExperience(){
+		Intent i = new Intent(this, FirstTimeExperienceActivity.class);
+		i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+		startActivity(i);
+		finish();
 	}
 
 	public void goToChooseRoom(){

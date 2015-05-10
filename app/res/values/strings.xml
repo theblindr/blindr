@@ -34,5 +34,10 @@
     <string name="photo">Photo</string>
     <string name="use_photo">Do you want to use this picture?</string>
     <string name="add_picture">Add a picture</string>
+    <string name="back">Back</string>
+    <string name="next">Next</string>
+    <string name="finish">Finish</string>
+    <string name="blindr_desc">blindr drops you in a chatroom populated with the brightest folks in town, while remaining anonymous! blindr allows chatees to « show interest » in one another, matching them personally, revealing their identity.</string>
+    <string name="add_pictures">Let others know what you look like!\nAdd a minimum of two pictures</string>
 
 </resources>

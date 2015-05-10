@@ -28,13 +28,13 @@ import com.lesgens.blindr.models.User;
 import com.lesgens.blindr.network.HTTPRequest.RequestType;
 
 public class Server {
-	
+
 	private static List<UserAuthenticatedListener> userAuthenticatedListeners = new ArrayList<UserAuthenticatedListener>();
 	private static List<EventsListener> eventsListeners = new ArrayList<EventsListener>();
 	private static List<FacebookProfileListener> profileListeners = new ArrayList<FacebookProfileListener>();
 	private static String address = "https://blindr-backend.herokuapp.com/";
 	private static String TAG = "Blindr_Server";
-	
+
 	public static void connect(String authenticationToken) {
 		AsyncTask<String, Void, String> request = new AsyncTask<String, Void, String>() {
 
@@ -53,11 +53,14 @@ public class Server {
 			protected void onPostExecute(String result) {
 				super.onPostExecute(result);
 				String userId = "";
+				String fakeName = "";
 				Log.i(TAG, "Auth response's json: "+ result);
 				try {
-					userId = readUserToken(new StringReader(result));
-					Log.i(TAG, "Auth response's userId: "+ userId);
-					Controller.getInstance().setMyOwnUser(new User(null, AvatarGenerator.generate(Controller.getInstance().getDimensionAvatar(), Controller.getInstance().getDimensionAvatar()), userId));
+					String[] auth = readAuth(new StringReader(result));
+					userId = auth[0];
+					fakeName = auth[1];
+					Log.i(TAG, "Auth response's userId: "+ userId + " fake name:" + fakeName);
+					Controller.getInstance().setMyOwnUser(new User(fakeName, AvatarGenerator.generate(Controller.getInstance().getDimensionAvatar(), Controller.getInstance().getDimensionAvatar()), userId));
 					for(UserAuthenticatedListener listener: userAuthenticatedListeners) {
 						listener.onUserAuthenticated();
 					}
@@ -74,13 +77,13 @@ public class Server {
 					}
 				}
 			}
-			
+
 		};
 		request.execute(authenticationToken);
 	}
-	
+
 	public static void getEvents() {
-		
+
 		AsyncTask<String, Void, String> request = new AsyncTask<String, Void, String>() {
 
 			@Override
@@ -88,13 +91,13 @@ public class Server {
 				String finalAddress = address + "events";
 				Log.i(TAG, "Events address: " + finalAddress);
 				Log.i("SERVER+INFOS", "Events city: " + arg0[1]);
-				
+
 				List<NameValuePair> data = new ArrayList<NameValuePair>();
 				data.add(new BasicNameValuePair("city", arg0[1]));
-				
+
 				List<NameValuePair> headers = new ArrayList<NameValuePair>();
 				headers.add(new BasicNameValuePair("X-User-Token", arg0[0]));
-				
+
 				HTTPRequest request = new HTTPRequest(finalAddress, RequestType.GET, data, headers);
 				return request.getOutput();
 			}
@@ -117,12 +120,12 @@ public class Server {
 					e.printStackTrace();
 				}
 			}
-			
+
 		};
-		
+
 		request.execute(Controller.getInstance().getMyself().getId(), Controller.getInstance().getCity().getName());
 	}
-	
+
 	public static void sendPrivateMessage(User destination, String message) {
 		AsyncTask<String, Void, String> request = new AsyncTask<String, Void, String>() {
 
@@ -130,14 +133,14 @@ public class Server {
 			protected String doInBackground(String... arg0) {
 				String finalAddress = address + "events/message";
 				Log.i(TAG, "Send private message address: " + finalAddress);
-				
+
 				List<NameValuePair> data = new ArrayList<NameValuePair>();
 				data.add(new BasicNameValuePair("dst_user", arg0[1]));
 				data.add(new BasicNameValuePair("message", arg0[2]));
-				
+
 				List<NameValuePair> headers = new ArrayList<NameValuePair>();
 				headers.add(new BasicNameValuePair("X-User-Token", arg0[0]));
-				
+
 				HTTPRequest request = new HTTPRequest(finalAddress, RequestType.POST, data, headers);
 				return request.getOutput();
 			}
@@ -147,11 +150,11 @@ public class Server {
 				super.onPostExecute(result);
 				Log.i(TAG, "Sent message's response: "+ result);
 			}
-			
+
 		};
 		request.execute(Controller.getInstance().getMyself().getId(), destination.getId(), message);
 	}
-	
+
 	public static void sendPublicMessage(City destination, String message) {
 		AsyncTask<String, Void, String> request = new AsyncTask<String, Void, String>() {
 
@@ -159,14 +162,14 @@ public class Server {
 			protected String doInBackground(String... arg0) {
 				String finalAddress = address + "events/message";
 				Log.i(TAG, "Send public message address: " + finalAddress);
-				
+
 				List<NameValuePair> data = new ArrayList<NameValuePair>();
 				data.add(new BasicNameValuePair("dst_city", arg0[1]));
 				data.add(new BasicNameValuePair("message", arg0[2]));
-				
+
 				List<NameValuePair> headers = new ArrayList<NameValuePair>();
 				headers.add(new BasicNameValuePair("X-User-Token", arg0[0]));
-				
+
 				HTTPRequest request = new HTTPRequest(finalAddress, RequestType.POST, data, headers);
 				return request.getOutput();
 			}
@@ -176,11 +179,11 @@ public class Server {
 				super.onPostExecute(result);
 				Log.i(TAG, "Sent message's response: "+ result);
 			}
-			
+
 		};
 		request.execute(Controller.getInstance().getMyself().getId(), destination.getId(), message);
 	}
-	
+
 	public static void like(User user, String userFakeName) {
 		AsyncTask<String, Void, String> request = new AsyncTask<String, Void, String>() {
 
@@ -188,13 +191,13 @@ public class Server {
 			protected String doInBackground(String... arg0) {
 				String finalAddress = address + "events/like";
 				Log.i(TAG, "Like address: " + finalAddress);
-				
+
 				List<NameValuePair> data = new ArrayList<NameValuePair>();
 				data.add(new BasicNameValuePair("dst_user", arg0[1]));
-				
+
 				List<NameValuePair> headers = new ArrayList<NameValuePair>();
 				headers.add(new BasicNameValuePair("X-User-Token", arg0[0]));
-				
+
 				HTTPRequest request = new HTTPRequest(finalAddress, RequestType.POST, data, headers);
 				return request.getOutput();
 			}
@@ -204,14 +207,14 @@ public class Server {
 				super.onPostExecute(result);
 				Log.i(TAG, "Like's response: "+ result);
 			}
-			
+
 		};
 		request.execute(Controller.getInstance().getMyself().getId(), user.getId());
 		for(EventsListener listener: eventsListeners) {
 			listener.onUserLiked(user, userFakeName);
 		}
 	}
-	
+
 	public static void dislike(User user) {
 		AsyncTask<String, Void, String> request = new AsyncTask<String, Void, String>() {
 
@@ -219,13 +222,13 @@ public class Server {
 			protected String doInBackground(String... arg0) {
 				String finalAddress = address + "events/dislike";
 				Log.i(TAG, "Like address: " + finalAddress);
-				
+
 				List<NameValuePair> data = new ArrayList<NameValuePair>();
 				data.add(new BasicNameValuePair("dst_user", arg0[1]));
-				
+
 				List<NameValuePair> headers = new ArrayList<NameValuePair>();
 				headers.add(new BasicNameValuePair("X-User-Token", arg0[0]));
-				
+
 				HTTPRequest request = new HTTPRequest(finalAddress, RequestType.POST, data, headers);
 				return request.getOutput();
 			}
@@ -235,11 +238,11 @@ public class Server {
 				super.onPostExecute(result);
 				Log.i(TAG, "Dislike response: "+ result);
 			}
-			
+
 		};
 		request.execute(Controller.getInstance().getMyself().getId(), user.getId());
 	}
-	
+
 	public static void getMatches() {
 		// get tous les matchs déjà fait
 		AsyncTask<String, Void, String> request = new AsyncTask<String, Void, String>() {
@@ -248,10 +251,10 @@ public class Server {
 			protected String doInBackground(String... arg0) {
 				String finalAddress = address + "events/like";
 				Log.i(TAG, "Like address: " + finalAddress);
-				
+
 				List<NameValuePair> headers = new ArrayList<NameValuePair>();
 				headers.add(new BasicNameValuePair("X-User-Token", arg0[0]));
-				
+
 				HTTPRequest request = new HTTPRequest(finalAddress, RequestType.GET, null, headers);
 				return request.getOutput();
 			}
@@ -276,7 +279,7 @@ public class Server {
 		};
 		request.execute(Controller.getInstance().getMyself().getId());
 	}
-	
+
 	public static void getUserEvents(User user) {
 		// get les events avec un user en particulier
 		AsyncTask<String, Void, String> request = new AsyncTask<String, Void, String>() {
@@ -285,14 +288,16 @@ public class Server {
 			protected String doInBackground(String... arg0) {
 				String finalAddress = address + "events/" + arg0[1];
 				Log.i(TAG, "Events avec user address: " + finalAddress);
-				
+
 				List<NameValuePair> headers = new ArrayList<NameValuePair>();
 				headers.add(new BasicNameValuePair("X-User-Token", arg0[0]));
+
+				List<NameValuePair> data = new ArrayList<NameValuePair>();
 				long lastTime = DatabaseHelper.getInstance().getLastMessageFetched(arg0[1]);
 				Log.i(TAG, "Last message fetched=" + lastTime);
-				headers.add(new BasicNameValuePair("since", String.valueOf(lastTime)));
-				
-				HTTPRequest request = new HTTPRequest(finalAddress, RequestType.GET, null, headers);
+				data.add(new BasicNameValuePair("since", String.valueOf(lastTime)));
+
+				HTTPRequest request = new HTTPRequest(finalAddress, RequestType.GET, data, headers);
 				return request.getOutput();
 			}
 
@@ -316,7 +321,7 @@ public class Server {
 		};
 		request.execute(Controller.getInstance().getMyself().getId(), user.getId());
 	}
-	
+
 	public static void getUserFacebookPictureSlideshow(User user) {
 		// get les events avec un user en particulier
 		AsyncTask<String, Void, String> request = new AsyncTask<String, Void, String>() {
@@ -325,14 +330,14 @@ public class Server {
 			protected String doInBackground(String... arg0) {
 				String finalAddress = address + "pictures";
 				Log.i(TAG, "Pictures avec user address: " + finalAddress);
-				
+
 				List<NameValuePair> headers = new ArrayList<NameValuePair>();
 				headers.add(new BasicNameValuePair("X-User-Token", arg0[0]));
-				
+
 				List<NameValuePair> data = new ArrayList<NameValuePair>();
 				data.add(new BasicNameValuePair("dst_id", arg0[1]));
 				data.add(new BasicNameValuePair("typeReq", "slideshow"));
-				
+
 				HTTPRequest request = new HTTPRequest(finalAddress, RequestType.GET, data, headers);
 				return request.getOutput();
 			}
@@ -343,7 +348,7 @@ public class Server {
 				try {
 					Log.i(TAG, "User pictures response: "+ result);
 					List<String> pictures = new ArrayList<String>();
- 					StringReader in = new StringReader(result);
+					StringReader in = new StringReader(result);
 					JsonReader reader = new JsonReader(in);
 					reader.beginArray();
 					while(reader.hasNext()){
@@ -366,7 +371,7 @@ public class Server {
 		};
 		request.execute(Controller.getInstance().getMyself().getId(), user.getId());
 	}
-	
+
 	public static void getUserFacebookPictures(User user) {
 		// get les events avec un user en particulier
 		AsyncTask<String, Void, String> request = new AsyncTask<String, Void, String>() {
@@ -375,13 +380,13 @@ public class Server {
 			protected String doInBackground(String... arg0) {
 				String finalAddress = address + "pictures";
 				Log.i(TAG, "Pictures avec user address: " + finalAddress);
-				
+
 				List<NameValuePair> headers = new ArrayList<NameValuePair>();
 				headers.add(new BasicNameValuePair("X-User-Token", arg0[0]));
-				
+
 				List<NameValuePair> data = new ArrayList<NameValuePair>();
 				data.add(new BasicNameValuePair("typeReq", "all"));
-				
+
 				HTTPRequest request = new HTTPRequest(finalAddress, RequestType.GET, data, headers);
 				return request.getOutput();
 			}
@@ -392,7 +397,7 @@ public class Server {
 				try {
 					Log.i(TAG, "User pictures response: "+ result);
 					List<String> pictures = new ArrayList<String>();
- 					StringReader in = new StringReader(result);
+					StringReader in = new StringReader(result);
 					JsonReader reader = new JsonReader(in);
 					reader.beginArray();
 					while(reader.hasNext()){
@@ -415,47 +420,104 @@ public class Server {
 		};
 		request.execute(Controller.getInstance().getMyself().getId(), user.getId());
 	}
+
+	public static void setFacebookUrls(String facebookUrls) {
+		AsyncTask<String, Void, String> request = new AsyncTask<String, Void, String>() {
+
+			@Override
+			protected String doInBackground(String... arg0) {
+				String finalAddress = address + "pictures";
+				Log.i(TAG, "Set facebook urls address: " + finalAddress);
+
+				List<NameValuePair> data = new ArrayList<NameValuePair>();
+				data.add(new BasicNameValuePair("facebookUrls", arg0[1]));
+
+				List<NameValuePair> headers = new ArrayList<NameValuePair>();
+				headers.add(new BasicNameValuePair("X-User-Token", arg0[0]));
+
+				HTTPRequest request = new HTTPRequest(finalAddress, RequestType.POST, data, headers);
+				return request.getOutput();
+			}
+
+			@Override
+			protected void onPostExecute(String result) {
+				super.onPostExecute(result);
+				Log.i(TAG, "Set facebook urls response: "+ result);
+			}
+
+		};
+		request.execute(Controller.getInstance().getMyself().getId(), facebookUrls);
+	}
 	
+	public static void setInterestedIn(String interests) {
+		AsyncTask<String, Void, String> request = new AsyncTask<String, Void, String>() {
+
+			@Override
+			protected String doInBackground(String... arg0) {
+				String finalAddress = address + "interest_in";
+				Log.i(TAG, "Set interests address: " + finalAddress);
+
+				List<NameValuePair> data = new ArrayList<NameValuePair>();
+				data.add(new BasicNameValuePair("interested_in", arg0[1]));
+
+				List<NameValuePair> headers = new ArrayList<NameValuePair>();
+				headers.add(new BasicNameValuePair("X-User-Token", arg0[0]));
+
+				HTTPRequest request = new HTTPRequest(finalAddress, RequestType.POST, data, headers);
+				return request.getOutput();
+			}
+
+			@Override
+			protected void onPostExecute(String result) {
+				super.onPostExecute(result);
+				Log.i(TAG, "Set interests response: "+ result);
+			}
+
+		};
+		request.execute(Controller.getInstance().getMyself().getId(), interests);
+	}
+
 	public static void addUserAuthenticatedListener(UserAuthenticatedListener listener) {
 		userAuthenticatedListeners.add(listener);
 	}
-	
+
 	public static void removeUserAuthenticatedListener(UserAuthenticatedListener listener) {
 		userAuthenticatedListeners.remove(listener);
 	}
-	
+
 	public static void addEventsListener(EventsListener listener) {
 		eventsListeners.add(listener);
 	}
-	
+
 	public static void removeEventsListener(EventsListener listener) {
 		eventsListeners.remove(listener);
 	}
-	
+
 	public static void addProfileListener(FacebookProfileListener listener) {
 		profileListeners.add(listener);
 	}
-	
+
 	public static void removeProfileListener(FacebookProfileListener listener) {
 		profileListeners.remove(listener);
 	}
-	
-	private static String readUserToken(Reader in) throws IOException {
+
+	private static String[] readAuth(Reader in) throws IOException {
+		String[] auth = new String[2];
 		JsonReader reader = new JsonReader(in);
 		reader.beginObject();
-		String id = "";
 		while(reader.hasNext()){
 			String name = reader.nextName();
 			if (name.equals("token")) {
-				id = reader.nextString();
-				break;
+				auth[0] = reader.nextString();
+			} else if (name.equals("fake_name")) {
+				auth[1] = reader.nextString();
 			}
 		}
 		reader.endObject();
 		reader.close();
-		return id;
+		return auth;
 	}
-	
+
 	private static ArrayList<Event> readEvents(Reader in) throws IOException{
 		ArrayList<Event> events = new ArrayList<Event>();
 		JsonReader reader = new JsonReader(in);
@@ -467,7 +529,7 @@ public class Server {
 		reader.close();
 		return events;
 	}
-	
+
 	private static Event readEvent(JsonReader reader) throws IOException {
 		UUID id = null;
 		String type = null;
@@ -478,7 +540,7 @@ public class Server {
 		String gender = null;
 		String fakeName = null;
 		String realName = null;
-		
+
 		reader.beginObject();
 		while(reader.hasNext()) {
 			String name = reader.nextName();
@@ -505,10 +567,10 @@ public class Server {
 			}
 		}
 		reader.endObject();
-		
+
 		return EventBuilder.buildEvent(id, type, destination, timestamp, userId, message, gender, fakeName, realName);
 	}
-	
+
 	private static List<Match> readMatches(Reader in) throws IOException {
 		List<Match> matches = new ArrayList<Match>();
 		JsonReader reader = new JsonReader(in);
@@ -520,7 +582,7 @@ public class Server {
 		reader.close();
 		return matches;
 	}
-	
+
 	private static Match readMatch(JsonReader reader) throws IOException {
 		reader.beginObject();
 		String userId = "";

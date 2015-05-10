@@ -56,6 +56,11 @@
             android:label="@string/title_activity_private_chat" >
         </activity>
         <activity
+            android:name=".FirstTimeExperienceActivity"
+            android:configChanges="orientation|keyboard|screenSize"
+            android:label="@string/title_activity_private_chat" >
+        </activity>
+        <activity
             android:name=".ChooseRoomActivity"
             android:configChanges="orientation|keyboard|screenSize"
             android:label="@string/title_activity_private_chat"
