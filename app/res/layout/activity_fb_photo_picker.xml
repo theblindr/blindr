@@ -15,7 +15,8 @@
     <ListView
         android:id="@+id/listView_albums"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:background="@color/main_color" >
     </ListView>
 
     <!-- A global progress spinner overlay so we don't have to reimplement this everywhere -->

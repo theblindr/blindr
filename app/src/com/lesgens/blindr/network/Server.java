@@ -336,7 +336,6 @@ public class Server {
 
 				List<NameValuePair> data = new ArrayList<NameValuePair>();
 				data.add(new BasicNameValuePair("dst_id", arg0[1]));
-				data.add(new BasicNameValuePair("typeReq", "slideshow"));
 
 				HTTPRequest request = new HTTPRequest(finalAddress, RequestType.GET, data, headers);
 				return request.getOutput();
@@ -352,62 +351,15 @@ public class Server {
 					JsonReader reader = new JsonReader(in);
 					reader.beginArray();
 					while(reader.hasNext()){
-						pictures.add(reader.nextString());
+						for(String s :reader.nextString().split(",")){
+							pictures.add(s);
+						}
 					}
 					reader.endArray();
 					reader.close();
 					in.close();
 					for(FacebookProfileListener listener: profileListeners) {
 						listener.onSlideshowPicturesReceived(pictures);
-					}
-				} catch (IOException e) {
-					Log.i(TAG, "Something went wrong when fetching the pictures.");
-					e.printStackTrace();
-				} catch (Exception e) {
-					Log.i(TAG, "Something went wrong when fetching the pictures.");
-					e.printStackTrace();
-				}
-			}
-		};
-		request.execute(Controller.getInstance().getMyself().getId(), user.getId());
-	}
-
-	public static void getUserFacebookPictures(User user) {
-		// get les events avec un user en particulier
-		AsyncTask<String, Void, String> request = new AsyncTask<String, Void, String>() {
-
-			@Override
-			protected String doInBackground(String... arg0) {
-				String finalAddress = address + "pictures";
-				Log.i(TAG, "Pictures avec user address: " + finalAddress);
-
-				List<NameValuePair> headers = new ArrayList<NameValuePair>();
-				headers.add(new BasicNameValuePair("X-User-Token", arg0[0]));
-
-				List<NameValuePair> data = new ArrayList<NameValuePair>();
-				data.add(new BasicNameValuePair("typeReq", "all"));
-
-				HTTPRequest request = new HTTPRequest(finalAddress, RequestType.GET, data, headers);
-				return request.getOutput();
-			}
-
-			@Override
-			protected void onPostExecute(String result) {
-				super.onPostExecute(result);
-				try {
-					Log.i(TAG, "User pictures response: "+ result);
-					List<String> pictures = new ArrayList<String>();
-					StringReader in = new StringReader(result);
-					JsonReader reader = new JsonReader(in);
-					reader.beginArray();
-					while(reader.hasNext()){
-						pictures.add(reader.nextString());
-					}
-					reader.endArray();
-					reader.close();
-					in.close();
-					for(FacebookProfileListener listener: profileListeners) {
-						listener.onProfilePicturesReceived(pictures);
 					}
 				} catch (IOException e) {
 					Log.i(TAG, "Something went wrong when fetching the pictures.");
@@ -454,7 +406,7 @@ public class Server {
 
 			@Override
 			protected String doInBackground(String... arg0) {
-				String finalAddress = address + "interest_in";
+				String finalAddress = address + "interests";
 				Log.i(TAG, "Set interests address: " + finalAddress);
 
 				List<NameValuePair> data = new ArrayList<NameValuePair>();

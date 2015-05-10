@@ -39,5 +39,6 @@
     <string name="finish">Finish</string>
     <string name="blindr_desc">blindr drops you in a chatroom populated with the brightest folks in town, while remaining anonymous! blindr allows chatees to « show interest » in one another, matching them personally, revealing their identity.</string>
     <string name="add_pictures">Let others know what you look like!\nAdd a minimum of two pictures</string>
+    <string name="not_enough_pictures">You need to add at least 2 pictures to your profile</string>
 
 </resources>
