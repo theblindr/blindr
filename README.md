@@ -9,3 +9,4 @@ PS: Ce logiciel fût dévloppé dans le cadre de la deuxième édition du McHack
 - Marc-Antoine Hinse
 - Jérôme Gingras
 - Israël Hallé
+- Louis Dion-Marcil
