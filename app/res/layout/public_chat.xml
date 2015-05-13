@@ -60,6 +60,8 @@
         android:divider="@color/transparent"
         android:dividerHeight="10dp"
         android:listSelector="@android:color/transparent"
+        android:overScrollMode="never"
+        android:scrollbars="none"
         android:stackFromBottom="true" />
 
     <RelativeLayout

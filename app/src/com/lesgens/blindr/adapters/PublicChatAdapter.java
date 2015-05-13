@@ -65,6 +65,7 @@ public class PublicChatAdapter extends ArraySwipeAdapter<Message> implements Swi
 		public ImageView avatar;
 		public TextView message;
 		public TextView time;
+		public TextView timePicture;
 		public SwipeLayout swipeLayout;
 		public ImageView picture;
 	}
@@ -92,6 +93,7 @@ public class PublicChatAdapter extends ArraySwipeAdapter<Message> implements Swi
 			viewHolder.swipeLayout = null;
 			viewHolder.message = (TextView) rowView.findViewById(R.id.message);
 			viewHolder.time = (TextView) rowView.findViewById(R.id.time);
+			viewHolder.timePicture = (TextView) rowView.findViewById(R.id.time_picture);
 			viewHolder.picture = (ImageView) rowView.findViewById(R.id.picture);
 			rowView.setTag(viewHolder);
 		} else{
@@ -102,6 +104,7 @@ public class PublicChatAdapter extends ArraySwipeAdapter<Message> implements Swi
 			viewHolder.avatar = (ImageView) rowView.findViewById(R.id.avatar);
 			viewHolder.message = (TextView) rowView.findViewById(R.id.message);
 			viewHolder.time = (TextView) rowView.findViewById(R.id.time);
+			viewHolder.timePicture = (TextView) rowView.findViewById(R.id.time_picture);
 			viewHolder.swipeLayout =  (SwipeLayout) rowView.findViewById(R.id.swipe_layout);
 			viewHolder.picture = (ImageView) rowView.findViewById(R.id.picture);
 
@@ -115,6 +118,8 @@ public class PublicChatAdapter extends ArraySwipeAdapter<Message> implements Swi
 		if(message.getMessage().startsWith(Utils.BLINDR_IMAGE_BASE)){
 			holder.message.setVisibility(View.GONE);
 			holder.time.setVisibility(View.GONE);
+			holder.timePicture.setVisibility(View.VISIBLE);
+			holder.timePicture.setText(sdfMessage.format(message.getTimestamp()));
 			holder.picture.setVisibility(View.VISIBLE);
 			String encoded = message.getMessage().substring(Utils.BLINDR_IMAGE_BASE.length());
 			byte[] bytes = Base64.decode(encoded, Base64.DEFAULT);
@@ -124,6 +129,7 @@ public class PublicChatAdapter extends ArraySwipeAdapter<Message> implements Swi
 		} else{
 			holder.message.setVisibility(View.VISIBLE);
 			holder.time.setVisibility(View.VISIBLE);
+			holder.timePicture.setVisibility(View.GONE);
 			holder.message.setText(message.getMessage());
 			holder.time.setText(sdfMessage.format(message.getTimestamp()));
 		}
