@@ -242,6 +242,7 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 				chatAdapter.addMessage(message);
 				chatAdapter.notifyDataSetChanged();
 				Server.sendPrivateMessage(remoteUser, message.getMessage());
+				DatabaseHelper.getInstance().addMessage(message, remoteUser.getId());
 				editText.setText("");
 				scrollMyListViewToTheBottomNowWeHere();
 			}
@@ -311,7 +312,9 @@ public class PrivateChatActivity extends Activity implements OnClickListener, Ev
 			android.util.Log.i("Blindr", "New event=" + e);
 			if(e instanceof Message && e.getDestination() instanceof User){
 				if(((User) e.getDestination()).getId().equals(Controller.getInstance().getMyId())){
-					chatAdapter.addMessage((Message) e);
+					if(chatAdapter.addMessage((Message) e)){
+						DatabaseHelper.getInstance().addMessage((Message) e, remoteUser.getId());
+					}
 					chatAdapter.notifyDataSetChanged();
 					scrollMyListViewToTheBottomNowWeHere();
 				}
